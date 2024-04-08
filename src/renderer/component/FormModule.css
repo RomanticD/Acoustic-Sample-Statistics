@@ -1,0 +1,84 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container styles */
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Input styles */
+input {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius:20px;
+}
+
+/* Error message styles */
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+/* Submit button styles */
+input[type="submit"] {
+  color: #fff;
+  margin-top: 10px;
+  background-color: #6c63ff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  appearance: none;
+  font-size: 1rem;
+  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+  0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #564dff; /* Darken the color on hover */
+  transform: translateY(-2px); /* Add a subtle lift effect */
+  box-shadow: 0px 10px 25px -6px rgba(24, 39, 75, 0.12),
+  0px 10px 10px -10px rgba(24, 39, 75, 0.14); /* Adjust shadow on hover */
+}
+
+.fieldButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #0056b3;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+  transition: all ease-in-out 0.3s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fieldButton:hover {
+  color: white;
+  background-color: #0056b3;
+  transform: scale(1.1);
+  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+
+
+.buttonsGroup {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
