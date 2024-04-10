@@ -1,9 +1,5 @@
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
 body {
-  position: relative;
+  /*position: relative;*/
   color: white;
   height: 100vh;
   background: linear-gradient(
@@ -17,8 +13,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 0;
 }
 
 button {
@@ -68,26 +62,27 @@ h1 {
 }
 
 .panel {
-  width: 100%;
   display: flex;
-  padding: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  padding: 20px;
   height: 95vh;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #ccc transparent;
-  max-width: 80%;
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
 }
 
 .right-panel {
-  margin: 10px
 }
 
 .left-panel {
 }
+
+.icon-image {
+  border-radius: 20px;
+}
+
+.rootContainer {
+}
+

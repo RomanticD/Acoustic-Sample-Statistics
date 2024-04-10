@@ -4,6 +4,8 @@ import './InfoDisplay.css'; // 添加样式
 // @ts-ignore
 // eslint-disable-next-line react/prop-types
 export default function InfoDisplay({ formData }) {
+  console.log(formData);
+
   return (
     <div className="info-display">
       <div className="data-container">
