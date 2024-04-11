@@ -5,9 +5,17 @@ import './App.css';
 import FormModule from './component/FormModule';
 import InfoDisplay from './component/InfoDisplay';
 import { reformatDataToDisplay } from './util/DisplayUtil';
+import WordScale from './component/scale/WordScale';
+import { Question } from './model/QuestionModel';
+import DigitalScale from './component/scale/DigitalScale';
 
 function Root() {
   const [formData, setFormData] = useState(null);
+
+  const egQuesion: Question = {
+    sampleId: 1,
+    numberOfEvaluations: 3,
+  };
 
   return (
     <div className="rootContainer">
@@ -39,6 +47,8 @@ function Root() {
           </div>
 
           <FormModule onSubmitData={setFormData} />
+          <WordScale question={egQuesion} />
+          <DigitalScale question={egQuesion} />
         </div>
 
         <div className="right-panel">
