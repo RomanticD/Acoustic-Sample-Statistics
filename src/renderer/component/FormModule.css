@@ -44,10 +44,10 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-  background-color: #564dff; /* Darken the color on hover */
-  transform: translateY(-2px); /* Add a subtle lift effect */
+  background-color: #564dff;
+  transform: translateY(-2px);
   box-shadow: 0px 10px 25px -6px rgba(24, 39, 75, 0.12),
-  0px 10px 10px -10px rgba(24, 39, 75, 0.14); /* Adjust shadow on hover */
+  0px 10px 10px -10px rgba(24, 39, 75, 0.14);
 }
 
 .fieldButton {

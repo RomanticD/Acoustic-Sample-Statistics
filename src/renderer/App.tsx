@@ -4,7 +4,7 @@ import icon from '../../assets/icon.svg';
 import './App.css';
 import FormModule from './component/FormModule';
 import InfoDisplay from './component/InfoDisplay';
-import { addYearsOldToAgeProperties } from './util/DisplayUtil';
+import { reformatDataToDisplay } from './util/DisplayUtil';
 
 function Root() {
   const [formData, setFormData] = useState(null);
@@ -43,7 +43,7 @@ function Root() {
 
         <div className="right-panel">
           {formData && (
-            <InfoDisplay formData={addYearsOldToAgeProperties(formData)} />
+            <InfoDisplay formData={reformatDataToDisplay(formData)} />
           )}
         </div>
       </div>

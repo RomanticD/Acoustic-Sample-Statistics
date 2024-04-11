@@ -4,15 +4,15 @@
   box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
   0px 18px 88px -4px rgba(24, 39, 75, 0.14);
   padding: 20px;
-  width: 300px; /* 调整宽度以适应需求 */
-  margin-left: 20px; /* 调整与右侧容器的间距 */
+  width: 300px;
+  margin-left: 20px;
+  margin-right: 20px;
   margin-top: 10px;
-  /*height: calc(100%); !* 让高度与父容器高度匹配 *!*/
   overflow-y: auto;
 }
 
 .data-container {
-  max-height: calc(100% - 50px); /* 调整数据容器的最大高度 */
+  max-height: calc(100% - 50px);
 }
 
 h2 {
