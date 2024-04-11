@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/prefer-default-export
+// need to be modified
 export function reformatDataToDisplay(data: { [key: string]: string }): {
   [key: string]: string;
 } {
