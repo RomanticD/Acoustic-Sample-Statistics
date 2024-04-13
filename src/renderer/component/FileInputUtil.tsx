@@ -5,7 +5,11 @@ import { Evaluation } from '../model/ExperimentDataModel';
 import {
   handleScaleDataToJson,
   handleSampleNames,
+  filterInvalidEvaluations,
+  getExperimentData,
 } from '../util/ScaleFormDataHandler';
+
+let scale = '';
 
 function ExcelToJsonConverter() {
   const [file, setFile] = useState(null);
@@ -17,10 +21,26 @@ function ExcelToJsonConverter() {
     const selectedFile = e.target.files[0];
 
     if (selectedFile) {
-      setFile(selectedFile);
-      setFileName(selectedFile.name);
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      const fileName = selectedFile.name;
+
+      if (fileName.includes('数字') || fileName.includes('词语')) {
+        setFile(selectedFile);
+        setFileName(fileName);
+
+        if (fileName.includes('数字')) {
+          scale = 'digital';
+        } else {
+          scale = 'word';
+        }
+      } else {
+        // 文件名不符合要求，给出警告并重置文件选择
+        window.alert('请选择量表类型文件');
+        e.target.value = null; // 重置文件选择
+        setFileName('选择文件'); // 重置文件名显示
+      }
     } else {
-      console.error('File selection canceled');
+      window.alert('文件选择失效');
     }
   };
 
@@ -28,7 +48,7 @@ function ExcelToJsonConverter() {
     console.clear();
 
     if (!file) {
-      console.error('No file selected');
+      window.alert('未选择文件！');
       return;
     }
 
@@ -39,45 +59,50 @@ function ExcelToJsonConverter() {
       const buffer = e.target.result;
       // @ts-ignore
       const data = new Uint8Array(buffer);
-      let evaluationData: Evaluation[] = [];
+      const evaluationData: Evaluation[] = [];
       const sampleNamesArr: string[] = [];
 
       try {
         const workbook = new Excel.Workbook();
         await workbook.xlsx.load(data);
-
         let isFirstSheet = true; // 标记是否为第一张工作表
 
         workbook.eachSheet((worksheet) => {
           if (isFirstSheet) {
             // 只处理第一张工作表
             worksheet.eachRow((row, rowNumber) => {
-              console.log('Row Values:', row.values);
-
               if (rowNumber !== 1) {
-                evaluationData = handleScaleDataToJson(row, sampleNamesArr);
+                handleScaleDataToJson(row, sampleNamesArr, evaluationData);
               } else {
                 handleSampleNames(row, sampleNamesArr);
               }
             });
-
             isFirstSheet = false;
           }
         });
 
-        setJsonData(JSON.stringify(evaluationData, null, 2));
+        const experimentData = getExperimentData(
+          sampleNamesArr,
+          evaluationData,
+          scale,
+        );
+
+        setJsonData(JSON.stringify(experimentData, null, 2));
+
+        console.log(experimentData);
       } catch (error) {
-        console.error('Error loading workbook:', error);
+        console.error(error);
+        // @ts-ignore
+        window.alert(`Error:${error.message}`);
       }
     };
-
     reader.readAsArrayBuffer(file);
   };
   return (
     <div className="file-input-container">
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor="file-input" className="file-input-label">
-        <span className="upload-icon">📁</span> {fileName || '选择文件'}
+        <span className="upload-icon">📁</span> {fileName || '选择量表'}
       </label>
       <input
         id="file-input"

@@ -1,5 +1,11 @@
 import Excel from 'exceljs';
-import { Evaluation, Participant } from '../model/ExperimentDataModel';
+import {
+  Evaluation,
+  Experiment,
+  ExperimentData,
+  Participant,
+  Sample,
+} from '../model/ExperimentDataModel';
 
 /**
  * 根据输入的词语或数字返回相应的烦恼度
@@ -34,13 +40,13 @@ function getSoundAnnoyanceValue(word: string | number): number | null {
  *
  * @param {Excel.Row} row - 包含评估数据的Excel行对象。
  * @param {string[]} sampleNamesArr - 量表的样本名称数组。
- * @returns {Evaluation[]} 返回包含评估数据的Evaluation对象数组。
+ * @param {Evaluation[]} evaluationData - 存储评估数据的Evaluation对象数组。
  */
 export function handleScaleDataToJson(
   row: Excel.Row,
   sampleNamesArr: string[],
-): Evaluation[] {
-  const evaluationData: Evaluation[] = [];
+  evaluationData: Evaluation[],
+): void {
   // @ts-ignore
   const participant: Participant = {};
   const evaluations: {
@@ -53,7 +59,6 @@ export function handleScaleDataToJson(
   row.values.forEach((value, index) => {
     if (index === 1) {
       participant.id = value; // 设置 participant.id
-      console.log(participant.id);
     } else {
       // 处理当前被试者的词语量表/数字量表
       // eslint-disable-next-line no-lonely-if
@@ -79,9 +84,6 @@ export function handleScaleDataToJson(
   };
 
   evaluationData.push(evaluation);
-  console.log('EvaluationData:', evaluationData);
-
-  return evaluationData;
 }
 
 /**
@@ -100,4 +102,40 @@ export function handleSampleNames(
       sampleNamesArr[index] = value;
     }
   });
+}
+
+export function filterInvalidEvaluations(
+  evaluationData: Evaluation[],
+): Evaluation[] {
+  return evaluationData;
+}
+
+export function getExperimentData(
+  sampleNamesArr: string[],
+  evaluationData: Evaluation[],
+  scale?: string,
+): ExperimentData {
+  const filteredArrayWithoutNull = sampleNamesArr.filter(
+    (item) => item !== null,
+  );
+  const uniqueSamples = Array.from(new Set(filteredArrayWithoutNull));
+
+  const samples: Sample[] = uniqueSamples.map((sampleName, index) => {
+    const type = sampleName.includes('-') ? 'reference' : 'test';
+    return {
+      id: index,
+      name: sampleName,
+      type,
+    };
+  });
+
+  const experiment: Experiment = {
+    scale: scale === 'digital' ? 'digital' : 'word',
+    samples,
+  };
+
+  return {
+    experiment,
+    evaluations: evaluationData,
+  };
 }
