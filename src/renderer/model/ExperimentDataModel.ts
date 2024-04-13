@@ -39,3 +39,11 @@ export function findSampleByName(
     (sample) => sample.name === sampleName,
   );
 }
+
+export interface noiseSensitivityScale {
+  participant: Participant;
+  evaluations: {
+    questionId: number;
+    sensitiveValue?: number;
+  };
+}
