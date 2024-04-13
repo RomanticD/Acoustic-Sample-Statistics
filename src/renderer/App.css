@@ -13,9 +13,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
+  margin-top: 30px;
 }
 
-button {
+.submit-personal-info-button {
   background-color: white;
   padding: 10px 20px;
   border-radius: 10px;
@@ -29,7 +31,7 @@ button {
   opacity: 0.9;
 }
 
-button:hover {
+.submit-personal-info-button:hover {
   transform: scale(1.05);
   opacity: 1;
 }
@@ -66,18 +68,22 @@ h1 {
   display: flex;
   padding: 20px;
   height: 95vh;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
 }
 
 .right-panel {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+  margin-left: 20px;
 }
 
 .left-panel {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
 }
 
 .icon-image {
@@ -86,4 +92,3 @@ h1 {
 
 .rootContainer {
 }
-

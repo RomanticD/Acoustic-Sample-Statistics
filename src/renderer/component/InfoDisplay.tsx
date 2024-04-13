@@ -1,5 +1,6 @@
 import React from 'react';
-import './InfoDisplay.css'; // 添加样式
+import './InfoDisplay.css';
+import TopNavbar from './NavBar'; // 添加样式
 
 // @ts-ignore
 // eslint-disable-next-line react/prop-types
@@ -8,6 +9,7 @@ export default function InfoDisplay({ formData }) {
 
   return (
     <div className="info-display">
+      <TopNavbar />
       <div className="data-container">
         {Object.entries(formData).map(([key, value]) => (
           <div key={key}>

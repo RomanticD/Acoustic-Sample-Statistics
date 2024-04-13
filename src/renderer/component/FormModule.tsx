@@ -19,16 +19,18 @@ export default function FormModule({ onSubmitData }) {
   };
 
   return (
-    <div className="container">
+    <div className="form-module-container">
       <form onSubmit={handleSubmit(onSubmit)}>
         {[...Array(fieldCount)].map((_, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <div key={index}>
             <input
+              className="input-in-form-module"
               {...register(`firstName_${index}`)}
               placeholder="First Name"
             />
             <input
+              className="input-in-form-module"
               {...register(`lastName_${index}`, { required: true })}
               placeholder="Last Name"
             />
@@ -36,6 +38,7 @@ export default function FormModule({ onSubmitData }) {
               <p className="error-message">Last name is required.</p>
             )}
             <input
+              className="input-in-form-module"
               {...register(`age_${index}`, { pattern: /\d+/ })}
               placeholder="Age"
             />
@@ -62,7 +65,7 @@ export default function FormModule({ onSubmitData }) {
             </button>
           )}
         </div>
-        <input type="submit" value="Submit" />
+        <input type="submit" className="input-in-form-module" value="Submit" />
       </form>
     </div>
   );

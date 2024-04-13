@@ -1,4 +1,4 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
@@ -8,17 +8,20 @@ import { reformatDataToDisplay } from './util/DisplayUtil';
 import WordScale from './component/scale/WordScale';
 import { Question } from './model/QuestionModel';
 import DigitalScale from './component/scale/DigitalScale';
+import ImportExcelPage from './component/ImportExcelPage';
+import TopNavBar from './component/NavBar';
+
+const eg: Question = {
+  sampleId: 1,
+  numberOfEvaluations: 3,
+};
 
 function Root() {
   const [formData, setFormData] = useState(null);
 
-  const egQuesion: Question = {
-    sampleId: 1,
-    numberOfEvaluations: 3,
-  };
-
   return (
     <div className="rootContainer">
+      <TopNavBar />
       <div className="panel">
         <div className="left-panel">
           <div className="sub-item-inside-left-panel">
@@ -27,7 +30,7 @@ function Root() {
           <h1>Acoustic Statistic Software</h1>
           <div className="sub-item-inside-left-panel">
             <a href="https://www.google.com" target="_blank" rel="noreferrer">
-              <button type="button">
+              <button type="button" className="submit-personal-info-button">
                 <span role="img" aria-label="books">
                   🥳
                 </span>
@@ -36,7 +39,7 @@ function Root() {
               </button>
             </a>
             <a href="https://www.baidu.com" target="_blank" rel="noreferrer">
-              <button type="button">
+              <button type="button" className="submit-personal-info-button">
                 <span role="img" aria-label="folded hands">
                   🍿
                 </span>
@@ -47,11 +50,15 @@ function Root() {
           </div>
 
           <FormModule onSubmitData={setFormData} />
-          <WordScale question={egQuesion} />
-          <DigitalScale question={egQuesion} />
         </div>
 
         <div className="right-panel">
+          <WordScale question={eg} />
+          <WordScale question={eg} />
+          <WordScale question={eg} />
+          <WordScale question={eg} />
+          <WordScale question={eg} />
+          <DigitalScale question={eg} />
           {formData && (
             <InfoDisplay formData={reformatDataToDisplay(formData)} />
           )}
@@ -66,6 +73,8 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Root />} />
+        <Route path="/ImportExcel" element={<ImportExcelPage />} />
+        <Route path="/infoDisplay" element={<InfoDisplay formData={eg} />} />
       </Routes>
     </Router>
   );

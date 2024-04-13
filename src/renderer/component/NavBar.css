@@ -1,0 +1,39 @@
+.navbar{
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+
+  position: fixed; /* 让导航栏固定在屏幕上 */
+  top: 0; /* 距离屏幕顶部的距离 */
+  left: 0; /* 距离屏幕左侧的距离 */
+  width: 100%; /* 导航栏宽度占满屏幕 */
+  display: flex; /* 使用 Flexbox 进行布局 */
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  z-index: 999; /* 确保导航栏在最上层 */
+}
+
+.nav-link {
+  font-weight: 800;
+  text-decoration: none;
+  color: #333; /* dark gray text color */
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  padding: 8px 12px; /* increased padding for better spacing */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* added box-shadow */
+  transition: all 0.3s ease; /* smooth transition effect */
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2); /* increased shadow on hover */
+  border-radius: 10px;
+}
+
+
+.navbar-item {
+  padding: 5px;
+}

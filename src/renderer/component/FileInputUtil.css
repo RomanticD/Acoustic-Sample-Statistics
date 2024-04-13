@@ -1,0 +1,56 @@
+.file-input-container {
+  height: 90vh;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+
+.file-input-label {
+  display: block;
+  background-color: rgba(255, 255, 255, 0.7); /* 设置毛玻璃效果 */
+  border-radius: 120px;
+  padding: 5px;
+  cursor: pointer;
+  text-align: center;
+  color: black; /* 设置黑色文字 */
+}
+
+.file-input {
+  display: none;
+
+}
+
+.upload-icon {
+  margin-right: 5px;
+}
+
+
+.button {
+  padding: 8px 16px;
+  margin: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.json-data {
+  /*max-height: 300px;*/
+  min-height: 500px;
+  width: 700px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: black;
+}
