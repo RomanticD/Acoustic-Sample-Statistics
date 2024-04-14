@@ -5,7 +5,7 @@ import { Evaluation } from '../model/ExperimentDataModel';
 import {
   handleScaleDataToJson,
   handleSampleNames,
-  filterInvalidEvaluations,
+  filterInvalidData,
   getExperimentData,
 } from '../util/ScaleFormDataHandler';
 

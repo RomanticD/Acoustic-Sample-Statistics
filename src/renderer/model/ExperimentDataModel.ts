@@ -31,7 +31,7 @@ export interface ExperimentData {
   evaluations: Evaluation[];
 }
 
-export function findSampleByName(
+export function getSampleByName(
   experimentData: ExperimentData,
   sampleName: String,
 ): Sample | undefined {
@@ -40,10 +40,25 @@ export function findSampleByName(
   );
 }
 
-export interface noiseSensitivityScale {
+export interface NoiseSensitivityScale {
   participant: Participant;
   evaluations: {
     questionId: number;
     sensitiveValue?: number;
   };
+}
+
+export interface EvaluationDetail {
+  rating?: number;
+  numberOfEvaluations: 1 | 2 | 3;
+}
+
+export interface EvaluationBySingleParticipant {
+  sample: Sample;
+  detail: EvaluationDetail[];
+}
+
+export interface SamplesEvaluationByParticipant {
+  participant: Participant;
+  evaluations: EvaluationBySingleParticipant[];
 }

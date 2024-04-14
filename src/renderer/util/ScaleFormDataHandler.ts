@@ -1,10 +1,14 @@
 import Excel from 'exceljs';
 import {
   Evaluation,
+  EvaluationBySingleParticipant,
+  EvaluationDetail,
   Experiment,
   ExperimentData,
+  getSampleByName,
   Participant,
   Sample,
+  SamplesEvaluationByParticipant,
 } from '../model/ExperimentDataModel';
 
 /**
@@ -131,22 +135,95 @@ export function handleSampleNames(
   });
 }
 
-export function filterInvalidEvaluations(
-  evaluationData: Evaluation[],
-  scale: string,
-): Evaluation[] {
-  const filteredEvaluationData: Evaluation[] = [];
+function getDetailsFromEvaluationsWithSameName(
+  evaluationsWithSameSampleName: any,
+): EvaluationDetail[] {
+  const details: EvaluationDetail[] = [];
+
+  // @ts-ignore
+  evaluationsWithSameSampleName.forEach((evaluation) => {
+    const { rating, numberOfEvaluations } = evaluation;
+    const existingDetail = details.find(
+      (detail) => detail.numberOfEvaluations === numberOfEvaluations,
+    );
+
+    if (existingDetail) {
+      // 如果已存在与当前评价次数相匹配的详情，则更新它的rating
+      existingDetail.rating = rating;
+    } else {
+      // 如果不存在与当前评价次数相匹配的详情，则创建一个新的详情
+      details.push({ rating, numberOfEvaluations });
+    }
+  });
+
+  return details;
+}
+
+export function filterInvalidData(
+  experimentData: ExperimentData,
+): SamplesEvaluationByParticipant[] {
+  const evaluationData = experimentData.evaluations;
+  const filteredEvaluationData: SamplesEvaluationByParticipant[] = [];
+  const allParticipants: Participant = evaluationData.map((data) => {
+    return data.participant;
+  });
   const invalidParticipants: Participant[] = []; // 如果被试无效比例在百分之30以上则该被试所有数据无效
 
+  // TODO: 出现次数无法显示切3组数据只push了一组进去
+
   evaluationData.forEach((participantEvaluationData) => {
-    // 对于每一个被试者的数据
+    // 对于每一个被试者的所有评价数据(每一行）
     const totalEvaluationsCount: number =
       participantEvaluationData.evaluations.length;
     const currentParticipant = participantEvaluationData.participant;
+    let integratedSingleParticipantAllEvaluations: EvaluationBySingleParticipant[] =
+      [];
 
-    participantEvaluationData.evaluations.forEach(
-      (participantEvaluationData) => {},
-    );
+    participantEvaluationData.evaluations.forEach((singleEvaluationData) => {
+      // 对于被试者对每个评价记录(每个单元格)，将对同一样本的评价丢入details
+      const currentSampleNameToEvaluate = singleEvaluationData.sampleName;
+      let details: EvaluationDetail[] = [];
+
+      const evaluationsWithSameSampleName =
+        participantEvaluationData.evaluations.filter(
+          (evaluation) => evaluation.sampleName === currentSampleNameToEvaluate,
+        );
+
+      // 对于每个评价，从所有数据中找到和其为同一样本的数据，将它们的rating和numberOfEvaluations合成一个details
+      details = getDetailsFromEvaluationsWithSameName(
+        evaluationsWithSameSampleName,
+      );
+
+      console.error(details);
+
+      // 返回对应的Sample
+      const sample: Sample | undefined = getSampleByName(
+        experimentData,
+        currentSampleNameToEvaluate,
+      );
+
+      const filterDuplicates = integratedSingleParticipantAllEvaluations.filter(
+        (evaluation) => evaluation.sample !== sample,
+      );
+
+      // 合成单个被试者整理后的评价数据
+      filterDuplicates.push({
+        // @ts-ignore
+        sample,
+        details,
+      });
+
+      integratedSingleParticipantAllEvaluations = filterDuplicates;
+    });
+
+    // 合成SamplesEvaluationByParticipant
+    const samplesEvaluationByParticipant: SamplesEvaluationByParticipant = {
+      // @ts-ignore
+      participant: currentParticipant,
+      evaluations: integratedSingleParticipantAllEvaluations,
+    };
+
+    console.log(samplesEvaluationByParticipant);
   });
 
   return filteredEvaluationData;
