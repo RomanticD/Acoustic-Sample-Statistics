@@ -7,6 +7,7 @@ import {
   handleSampleNames,
   filterInvalidData,
   getExperimentData,
+  getFormattedExperimentData,
 } from '../util/ScaleFormDataHandler';
 
 let scale = '';
@@ -87,7 +88,13 @@ function ExcelToJsonConverter() {
           scale,
         );
 
-        setJsonData(JSON.stringify(experimentData, null, 2));
+        const formattedExperimentData = getFormattedExperimentData(
+          sampleNamesArr,
+          filterInvalidData(experimentData),
+          scale,
+        );
+
+        setJsonData(JSON.stringify(formattedExperimentData, null, 2));
 
         console.log(experimentData);
       } catch (error) {

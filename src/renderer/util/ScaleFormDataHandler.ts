@@ -5,6 +5,7 @@ import {
   EvaluationDetail,
   Experiment,
   ExperimentData,
+  FormattedExperimentData,
   getSampleByName,
   Participant,
   Sample,
@@ -58,7 +59,7 @@ export function handleScaleDataToJson(
   const evaluations: {
     sampleName: string;
     rating: number;
-    numberOfEvaluations: 1 | 2 | 3;
+    numberOfEvaluation: 1 | 2 | 3;
   }[] = [];
 
   // @ts-ignore
@@ -72,36 +73,29 @@ export function handleScaleDataToJson(
       // 处理当前被试者的词语量表/数字量表
       // eslint-disable-next-line no-lonely-if
       if (value !== null && value !== undefined) {
-        let sampleName = sampleNamesArr[index];
-        let rating = getSoundAnnoyanceValue(value);
-        let numberOfEvaluation = ((index - 2) % 3) + 1;
-
-        // 处理缺失的索引
         // @ts-ignore
         if (lastProcessedIndex !== null && index - lastProcessedIndex > 1) {
+          // 如果数据缺失，赋值rating为999
           for (
             let missingIndex = lastProcessedIndex + 1;
-            missingIndex < index;
+            missingIndex <= index - 1;
             missingIndex += 1
           ) {
-            sampleName = sampleNamesArr[missingIndex];
-            rating = 999;
-            numberOfEvaluation = ((missingIndex - 2) % 3) + 1;
             evaluations.push({
               // @ts-ignore
-              sampleName,
-              rating,
+              sampleName: sampleNamesArr[missingIndex],
+              rating: 999,
               // @ts-ignore
-              numberOfEvaluation,
+              numberOfEvaluation: ((missingIndex - 2) % 3) + 1,
             });
           }
         }
-
         evaluations.push({
-          sampleName,
+          sampleName: sampleNamesArr[index],
           // @ts-ignore
-          rating,
-          numberOfEvaluation,
+          rating: getSoundAnnoyanceValue(value),
+          // @ts-ignore
+          numberOfEvaluation: ((index - 2) % 3) + 1,
         });
 
         lastProcessedIndex = index; // 更新 lastProcessedIndex
@@ -136,15 +130,18 @@ export function handleSampleNames(
 }
 
 function getDetailsFromEvaluationsWithSameName(
-  evaluationsWithSameSampleName: any,
+  evaluationsWithSameSampleName: {
+    sampleName: string;
+    rating?: number;
+    numberOfEvaluation: 1 | 2 | 3;
+  }[],
 ): EvaluationDetail[] {
   const details: EvaluationDetail[] = [];
 
-  // @ts-ignore
   evaluationsWithSameSampleName.forEach((evaluation) => {
-    const { rating, numberOfEvaluations } = evaluation;
+    const { rating, numberOfEvaluation } = evaluation;
     const existingDetail = details.find(
-      (detail) => detail.numberOfEvaluations === numberOfEvaluations,
+      (detail) => detail.numberOfEvaluation === numberOfEvaluation,
     );
 
     if (existingDetail) {
@@ -152,10 +149,10 @@ function getDetailsFromEvaluationsWithSameName(
       existingDetail.rating = rating;
     } else {
       // 如果不存在与当前评价次数相匹配的详情，则创建一个新的详情
-      details.push({ rating, numberOfEvaluations });
+      // @ts-ignore
+      details.push({ rating, numberOfEvaluation });
     }
   });
-
   return details;
 }
 
@@ -189,12 +186,10 @@ export function filterInvalidData(
           (evaluation) => evaluation.sampleName === currentSampleNameToEvaluate,
         );
 
-      // 对于每个评价，从所有数据中找到和其为同一样本的数据，将它们的rating和numberOfEvaluations合成一个details
+      // 对于每个评价，从所有数据中找到和其为同一样本的数据，将它们的rating和numberOfEvaluation合成一个details
       details = getDetailsFromEvaluationsWithSameName(
         evaluationsWithSameSampleName,
       );
-
-      console.error(details);
 
       // 返回对应的Sample
       const sample: Sample | undefined = getSampleByName(
@@ -222,10 +217,8 @@ export function filterInvalidData(
       participant: currentParticipant,
       evaluations: integratedSingleParticipantAllEvaluations,
     };
-
-    console.log(samplesEvaluationByParticipant);
+    filteredEvaluationData.push(samplesEvaluationByParticipant);
   });
-
   return filteredEvaluationData;
 }
 
@@ -243,6 +236,36 @@ export function getExperimentData(
   evaluationData: Evaluation[],
   scale?: string,
 ): ExperimentData {
+  const filteredArrayWithoutNull = sampleNamesArr.filter(
+    (item) => item !== null,
+  );
+  const uniqueSamples = Array.from(new Set(filteredArrayWithoutNull));
+
+  const samples: Sample[] = uniqueSamples.map((sampleName, index) => {
+    const type = sampleName.includes('-') ? 'reference' : 'test';
+    return {
+      id: index,
+      name: sampleName,
+      type,
+    };
+  });
+
+  const experiment: Experiment = {
+    scale: scale === 'digital' ? 'digital' : 'word',
+    samples,
+  };
+
+  return {
+    experiment,
+    evaluations: evaluationData,
+  };
+}
+
+export function getFormattedExperimentData(
+  sampleNamesArr: string[],
+  evaluationData: SamplesEvaluationByParticipant[],
+  scale?: string,
+): FormattedExperimentData {
   const filteredArrayWithoutNull = sampleNamesArr.filter(
     (item) => item !== null,
   );

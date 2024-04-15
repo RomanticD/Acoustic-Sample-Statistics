@@ -16,7 +16,7 @@ export interface Evaluation {
   evaluations: {
     sampleName: string; // 被评价的声样本
     rating?: number; // 评分,词语量表为1-5（一点没有-非常严重），数字量表为0-10（一点不烦恼-极度烦恼）
-    numberOfEvaluations: 1 | 2 | 3; // 当前评价的次数，每个样本会评价三次
+    numberOfEvaluation: 1 | 2 | 3; // 当前评价的次数，每个样本会评价三次
   }[];
 }
 
@@ -25,7 +25,6 @@ export interface Experiment {
   samples: Sample[]; // 实验中的声样本数组
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface ExperimentData {
   experiment: Experiment;
   evaluations: Evaluation[];
@@ -50,7 +49,7 @@ export interface NoiseSensitivityScale {
 
 export interface EvaluationDetail {
   rating?: number;
-  numberOfEvaluations: 1 | 2 | 3;
+  numberOfEvaluation: 1 | 2 | 3;
 }
 
 export interface EvaluationBySingleParticipant {
@@ -61,4 +60,9 @@ export interface EvaluationBySingleParticipant {
 export interface SamplesEvaluationByParticipant {
   participant: Participant;
   evaluations: EvaluationBySingleParticipant[];
+}
+
+export interface FormattedExperimentData {
+  experiment: Experiment;
+  evaluations: SamplesEvaluationByParticipant[];
 }
