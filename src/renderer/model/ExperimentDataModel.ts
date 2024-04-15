@@ -54,12 +54,12 @@ export interface EvaluationDetail {
 
 export interface EvaluationBySingleParticipant {
   sample: Sample;
-  detail: EvaluationDetail[];
+  details: EvaluationDetail[];
 }
 
 export interface SamplesEvaluationByParticipant {
   participant: Participant;
-  evaluations: EvaluationBySingleParticipant[];
+  currentParticipantEvaluations: EvaluationBySingleParticipant[];
 }
 
 export interface FormattedExperimentData {

@@ -5,9 +5,10 @@ import { Evaluation } from '../model/ExperimentDataModel';
 import {
   handleScaleDataToJson,
   handleSampleNames,
-  filterInvalidData,
+  reformatExperimentData,
   getExperimentData,
   getFormattedExperimentData,
+  filterInvalidExperimentData,
 } from '../util/ScaleFormDataHandler';
 
 let scale = '';
@@ -90,13 +91,21 @@ function ExcelToJsonConverter() {
 
         const formattedExperimentData = getFormattedExperimentData(
           sampleNamesArr,
-          filterInvalidData(experimentData),
+          reformatExperimentData(experimentData),
           scale,
         );
 
-        setJsonData(JSON.stringify(formattedExperimentData, null, 2));
+        // setJsonData(JSON.stringify(formattedExperimentData, null, 2));
+        setJsonData(
+          JSON.stringify(
+            filterInvalidExperimentData(formattedExperimentData),
+            null,
+            2,
+          ),
+        );
 
-        console.log(experimentData);
+        // console.log(formattedExperimentData);
+        console.log(filterInvalidExperimentData(formattedExperimentData));
       } catch (error) {
         console.error(error);
         // @ts-ignore

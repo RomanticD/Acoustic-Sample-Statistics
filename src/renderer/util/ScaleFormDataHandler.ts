@@ -129,6 +129,13 @@ export function handleSampleNames(
   });
 }
 
+/**
+ * 根据相同样本名称的评价数据获取评价详情
+ *
+ * @param evaluationsWithSameSampleName - 相同样本名称的评价数据数组
+ *
+ * @returns 评价详情数组
+ */
 function getDetailsFromEvaluationsWithSameName(
   evaluationsWithSameSampleName: {
     sampleName: string;
@@ -156,22 +163,21 @@ function getDetailsFromEvaluationsWithSameName(
   return details;
 }
 
-export function filterInvalidData(
+/**
+ * 重新格式化实验数据
+ *
+ * @param experimentData - 原始实验数据对象
+ *
+ * @returns 重新格式化的样本评估数据数组
+ */
+export function reformatExperimentData(
   experimentData: ExperimentData,
 ): SamplesEvaluationByParticipant[] {
   const evaluationData = experimentData.evaluations;
   const filteredEvaluationData: SamplesEvaluationByParticipant[] = [];
-  const allParticipants: Participant = evaluationData.map((data) => {
-    return data.participant;
-  });
-  const invalidParticipants: Participant[] = []; // 如果被试无效比例在百分之30以上则该被试所有数据无效
-
-  // TODO: 出现次数无法显示切3组数据只push了一组进去
 
   evaluationData.forEach((participantEvaluationData) => {
     // 对于每一个被试者的所有评价数据(每一行）
-    const totalEvaluationsCount: number =
-      participantEvaluationData.evaluations.length;
     const currentParticipant = participantEvaluationData.participant;
     let integratedSingleParticipantAllEvaluations: EvaluationBySingleParticipant[] =
       [];
@@ -215,7 +221,7 @@ export function filterInvalidData(
     const samplesEvaluationByParticipant: SamplesEvaluationByParticipant = {
       // @ts-ignore
       participant: currentParticipant,
-      evaluations: integratedSingleParticipantAllEvaluations,
+      currentParticipantEvaluations: integratedSingleParticipantAllEvaluations,
     };
     filteredEvaluationData.push(samplesEvaluationByParticipant);
   });
@@ -261,6 +267,15 @@ export function getExperimentData(
   };
 }
 
+/**
+ * 获取格式化后的实验数据
+ *
+ * @param sampleNamesArr - 样本名称数组
+ * @param evaluationData - 样本评估数据数组
+ * @param scale - 实验规模，可选值为'digital'或'word'
+ *
+ * @returns 格式化后的实验数据对象
+ */
 export function getFormattedExperimentData(
   sampleNamesArr: string[],
   evaluationData: SamplesEvaluationByParticipant[],
@@ -289,4 +304,102 @@ export function getFormattedExperimentData(
     experiment,
     evaluations: evaluationData,
   };
+}
+
+export function filterInvalidExperimentData(
+  formattedExperimentData: FormattedExperimentData,
+): FormattedExperimentData {
+  // @ts-ignore
+  const experimentDataFromInput = formattedExperimentData.experiment;
+  const { scale } = experimentDataFromInput;
+  let invalidSampleCount: number = 0;
+  const deviationAllowed: number = scale === 'word' ? 2.5 : 2;
+  const evaluationsDataFromInput = formattedExperimentData.evaluations;
+
+  const filteredEvaluationsData: SamplesEvaluationByParticipant[] = [];
+  evaluationsDataFromInput.forEach(
+    // 对于一个人的所有评价
+    (singlePersonEvaluations: SamplesEvaluationByParticipant) => {
+      const { participant } = singlePersonEvaluations;
+      const { currentParticipantEvaluations } = singlePersonEvaluations;
+      let sampleEvaluationInvalid: boolean = false;
+      let filteredEvaluationsBySingleParticipant: SamplesEvaluationByParticipant;
+      let filteredSingleSampleEvaluationBySingleParticipant: EvaluationBySingleParticipant;
+      const filteredSingleSampleEvaluationBySingleParticipantArr: EvaluationBySingleParticipant[] =
+        [];
+
+      currentParticipantEvaluations.forEach(
+        // 对单一样本的评价
+        (evaluationsForSingleSample: EvaluationBySingleParticipant) => {
+          const { details, sample } = evaluationsForSingleSample;
+          let filteredEvaluationDetail: EvaluationDetail[] = [];
+
+          for (let i = 0; i < details.length; i += 1) {
+            for (let j = i + 1; j < details.length; j += 1) {
+              const rating1 = details[i].rating;
+              const rating2 = details[j].rating;
+
+              if (
+                rating1 !== undefined &&
+                rating2 !== undefined &&
+                Math.abs(rating1 - rating2) <= deviationAllowed
+              ) {
+                // 未偏离误差则保留
+                if (!filteredEvaluationDetail.includes(details[i])) {
+                  filteredEvaluationDetail.push(details[i]);
+                }
+
+                if (!filteredEvaluationDetail.includes(details[j])) {
+                  filteredEvaluationDetail.push(details[j]);
+                }
+              } else {
+                sampleEvaluationInvalid = true;
+              }
+            }
+          }
+
+          if (sampleEvaluationInvalid) {
+            filteredEvaluationDetail = [];
+            invalidSampleCount += 1;
+            sampleEvaluationInvalid = false;
+          }
+
+          filteredSingleSampleEvaluationBySingleParticipant = {
+            sample,
+            details: filteredEvaluationDetail,
+          };
+
+          filteredSingleSampleEvaluationBySingleParticipantArr.push(
+            filteredSingleSampleEvaluationBySingleParticipant,
+          );
+        },
+      );
+      // 还原filter后的数组
+      // eslint-disable-next-line prefer-const
+      filteredEvaluationsBySingleParticipant = {
+        participant,
+        currentParticipantEvaluations:
+          filteredSingleSampleEvaluationBySingleParticipantArr,
+      };
+
+      console.log(participant);
+      console.log(invalidSampleCount);
+
+      if (
+        invalidSampleCount <
+        formattedExperimentData.experiment.samples.length * 0.3
+      ) {
+        filteredEvaluationsData.push(filteredEvaluationsBySingleParticipant);
+      }
+
+      invalidSampleCount = 0;
+    },
+  );
+
+  const filteredData: FormattedExperimentData = {
+    experiment: experimentDataFromInput,
+    evaluations: filteredEvaluationsData,
+  };
+
+  return filteredData;
 }
