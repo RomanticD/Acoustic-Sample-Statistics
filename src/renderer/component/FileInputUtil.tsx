@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import './FileInputUtil.css';
 import Excel from 'exceljs';
-import { Evaluation } from '../model/ExperimentDataModel';
 import {
-  handleScaleDataToJson,
+  Evaluation,
+  NoiseSensitivityScaleData,
+} from '../model/ExperimentDataModel';
+import {
+  handleDigitalAndNumberScaleDataToJson,
   handleSampleNames,
   reformatExperimentData,
   getExperimentData,
   getFormattedExperimentData,
   filterInvalidExperimentData,
-} from '../util/ScaleFormDataHandler';
+} from '../util/WordAndDigitalScaleDataHandler';
+import getScale from '../util/Helper';
+import {
+  getNoiseSensitivityScaleData,
+  handleNoiseSensitivityScaleData,
+} from '../util/NoiseSensitivityScaleDataHandler';
+import handleAcousticParameterData from '../util/AcousticParameterDataHandler';
 
 let scale = '';
 
@@ -20,21 +29,19 @@ function ExcelToJsonConverter() {
 
   // @ts-ignore
   const handleFileChange = (e) => {
+    const keywords = ['数字', '词语', '敏感性', '声学参量'];
     const selectedFile = e.target.files[0];
+
+    setJsonData(''); // 清空显示数据
 
     if (selectedFile) {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       const fileName = selectedFile.name;
 
-      if (fileName.includes('数字') || fileName.includes('词语')) {
+      if (keywords.some((keyword) => fileName.includes(keyword))) {
         setFile(selectedFile);
         setFileName(fileName);
-
-        if (fileName.includes('数字')) {
-          scale = 'digital';
-        } else {
-          scale = 'word';
-        }
+        scale = getScale(fileName);
       } else {
         // 文件名不符合要求，给出警告并重置文件选择
         window.alert('请选择量表类型文件');
@@ -61,8 +68,10 @@ function ExcelToJsonConverter() {
       const buffer = e.target.result;
       // @ts-ignore
       const data = new Uint8Array(buffer);
-      const evaluationData: Evaluation[] = [];
+      const digitalAndWordScaleEvaluationData: Evaluation[] = [];
       const sampleNamesArr: string[] = [];
+      const noiseSensitivityScaleEvaluationData: NoiseSensitivityScaleData[] =
+        [];
 
       try {
         const workbook = new Excel.Workbook();
@@ -74,7 +83,20 @@ function ExcelToJsonConverter() {
             // 只处理第一张工作表
             worksheet.eachRow((row, rowNumber) => {
               if (rowNumber !== 1) {
-                handleScaleDataToJson(row, sampleNamesArr, evaluationData);
+                if (scale === 'digital' || scale === 'word') {
+                  handleDigitalAndNumberScaleDataToJson(
+                    row,
+                    sampleNamesArr,
+                    digitalAndWordScaleEvaluationData,
+                  );
+                } else if (scale === 'noise sensitivity') {
+                  handleNoiseSensitivityScaleData(
+                    row,
+                    noiseSensitivityScaleEvaluationData,
+                  );
+                } else if (scale === 'acoustic parameter') {
+                  handleAcousticParameterData();
+                }
               } else {
                 handleSampleNames(row, sampleNamesArr);
               }
@@ -83,29 +105,37 @@ function ExcelToJsonConverter() {
           }
         });
 
-        const experimentData = getExperimentData(
-          sampleNamesArr,
-          evaluationData,
-          scale,
-        );
+        if (scale === 'digital' || scale === 'word') {
+          const experimentData = getExperimentData(
+            sampleNamesArr,
+            digitalAndWordScaleEvaluationData,
+            scale,
+          );
 
-        const formattedExperimentData = getFormattedExperimentData(
-          sampleNamesArr,
-          reformatExperimentData(experimentData),
-          scale,
-        );
+          const formattedExperimentData = getFormattedExperimentData(
+            sampleNamesArr,
+            reformatExperimentData(experimentData),
+            scale,
+          );
 
-        // setJsonData(JSON.stringify(formattedExperimentData, null, 2));
-        setJsonData(
-          JSON.stringify(
-            filterInvalidExperimentData(formattedExperimentData),
-            null,
-            2,
-          ),
-        );
+          const validExperimentData = filterInvalidExperimentData(
+            formattedExperimentData,
+          );
 
-        // console.log(formattedExperimentData);
-        console.log(filterInvalidExperimentData(formattedExperimentData));
+          // setJsonData(JSON.stringify(formattedExperimentData, null, 2));
+          setJsonData(JSON.stringify(validExperimentData, null, 2));
+
+          console.log(validExperimentData);
+        } else if (scale === 'noise sensitivity') {
+          const sensitivityScaleData = getNoiseSensitivityScaleData(
+            sampleNamesArr,
+            noiseSensitivityScaleEvaluationData,
+          );
+
+          setJsonData(JSON.stringify(sensitivityScaleData, null, 2));
+        }
+
+        isFirstSheet = true;
       } catch (error) {
         console.error(error);
         // @ts-ignore

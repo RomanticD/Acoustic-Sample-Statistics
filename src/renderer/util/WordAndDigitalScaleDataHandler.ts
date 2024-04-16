@@ -6,40 +6,13 @@ import {
   Experiment,
   ExperimentData,
   FormattedExperimentData,
-  getSampleByName,
+  NoiseSensitivityScaleData,
+  NoiseSensitivityScaleDataExperimentData,
   Participant,
   Sample,
   SamplesEvaluationByParticipant,
 } from '../model/ExperimentDataModel';
-
-/**
- * 根据输入的词语或数字返回相应的烦恼度
- *
- * @param value 输入的词语或数字
- * @returns 返回与输入匹配的烦恼度数值，或者返回null（如果输入无法识别）
- */
-function getSoundAnnoyanceValue(value?: string | number): number | null {
-  if (typeof value === 'number') {
-    return value;
-  }
-
-  const wordMapping: { [key: string]: number } = {
-    一点没有: 0,
-    轻微: 2.5,
-    一般: 5,
-    严重: 7.5,
-    非常严重: 10,
-  };
-
-  // @ts-ignore
-  const lowercaseWord = value.trim().toLowerCase();
-
-  if (lowercaseWord in wordMapping) {
-    return wordMapping[lowercaseWord];
-  }
-
-  return null;
-}
+import { getSampleByName, getSoundAnnoyanceValue } from './Helper';
 
 /**
  * 将Excel行数据转换为评估数据的JSON格式。
@@ -49,7 +22,7 @@ function getSoundAnnoyanceValue(value?: string | number): number | null {
  * @param {string[]} sampleNamesArr - 量表的样本名称数组。
  * @param {Evaluation[]} evaluationData - 存储评估数据的Evaluation对象数组。
  */
-export function handleScaleDataToJson(
+export function handleDigitalAndNumberScaleDataToJson(
   row: Excel.Row,
   sampleNamesArr: string[],
   evaluationData: Evaluation[],
@@ -123,7 +96,7 @@ export function handleSampleNames(
 ): void {
   // @ts-ignore
   row.values.forEach((value: any, index: number) => {
-    if (index !== 1 && value) {
+    if (index !== 1 && value && value !== '') {
       sampleNamesArr[index] = value;
     }
   });
@@ -306,6 +279,12 @@ export function getFormattedExperimentData(
   };
 }
 
+/**
+ * 根据期望评分的偏差过滤无效的实验数据。
+ *
+ * @param formattedExperimentData - 要过滤的格式化实验数据。
+ * @returns 过滤后的具有有效评估的实验数据。
+ */
 export function filterInvalidExperimentData(
   formattedExperimentData: FormattedExperimentData,
 ): FormattedExperimentData {
@@ -369,9 +348,13 @@ export function filterInvalidExperimentData(
             details: filteredEvaluationDetail,
           };
 
-          filteredSingleSampleEvaluationBySingleParticipantArr.push(
-            filteredSingleSampleEvaluationBySingleParticipant,
-          );
+          if (
+            filteredSingleSampleEvaluationBySingleParticipant.details.length > 0 // 如果对某样本任意两次评价差值大于误差，去除被试对该样本的评价数据
+          ) {
+            filteredSingleSampleEvaluationBySingleParticipantArr.push(
+              filteredSingleSampleEvaluationBySingleParticipant,
+            );
+          }
         },
       );
       // 还原filter后的数组
@@ -389,7 +372,7 @@ export function filterInvalidExperimentData(
         invalidSampleCount <
         formattedExperimentData.experiment.samples.length * 0.3
       ) {
-        filteredEvaluationsData.push(filteredEvaluationsBySingleParticipant);
+        filteredEvaluationsData.push(filteredEvaluationsBySingleParticipant); // 如果无效数据大于百分之三十，则去除该被试所有数据
       }
 
       invalidSampleCount = 0;

@@ -21,30 +21,13 @@ export interface Evaluation {
 }
 
 export interface Experiment {
-  scale: 'word' | 'digital'; // 词语量表或数字量表
+  scale: 'word' | 'digital' | 'noise sensitivity';
   samples: Sample[]; // 实验中的声样本数组
 }
 
 export interface ExperimentData {
   experiment: Experiment;
   evaluations: Evaluation[];
-}
-
-export function getSampleByName(
-  experimentData: ExperimentData,
-  sampleName: String,
-): Sample | undefined {
-  return experimentData.experiment.samples.find(
-    (sample) => sample.name === sampleName,
-  );
-}
-
-export interface NoiseSensitivityScale {
-  participant: Participant;
-  evaluations: {
-    questionId: number;
-    sensitiveValue?: number;
-  };
 }
 
 export interface EvaluationDetail {
@@ -65,4 +48,30 @@ export interface SamplesEvaluationByParticipant {
 export interface FormattedExperimentData {
   experiment: Experiment;
   evaluations: SamplesEvaluationByParticipant[];
+}
+
+export interface NoiseSensitivityScaleData {
+  participant: Participant;
+  evaluation: {
+    questionId: number;
+    sensitiveValue: number;
+  };
+}
+
+export interface FormattedNoiseSensitivityScaleData {
+  participant: Participant;
+  evaluation: {
+    questionId: number;
+    sensitiveValue: number;
+  }[];
+}
+
+export interface NoiseSensitivityScaleDataExperimentData {
+  experiment: Experiment;
+  evaluations: NoiseSensitivityScaleData[];
+}
+
+export interface FormattedNoiseSensitivityScaleDataExperimentData {
+  experiment: Experiment;
+  evaluations: NoiseSensitivityScaleData[];
 }
