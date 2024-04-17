@@ -15,6 +15,7 @@ import {
 } from '../util/WordAndDigitalScaleDataHandler';
 import getScale from '../util/Helper';
 import {
+  getFormattedNoiseSensitivityScaleData,
   getNoiseSensitivityScaleData,
   handleNoiseSensitivityScaleData,
 } from '../util/NoiseSensitivityScaleDataHandler';
@@ -31,8 +32,6 @@ function ExcelToJsonConverter() {
   const handleFileChange = (e) => {
     const keywords = ['数字', '词语', '敏感性', '声学参量'];
     const selectedFile = e.target.files[0];
-
-    setJsonData(''); // 清空显示数据
 
     if (selectedFile) {
       // eslint-disable-next-line @typescript-eslint/no-shadow
@@ -131,6 +130,15 @@ function ExcelToJsonConverter() {
             sampleNamesArr,
             noiseSensitivityScaleEvaluationData,
           );
+
+          const formattedNoiseSensitivityScaleData =
+            getFormattedNoiseSensitivityScaleData(sensitivityScaleData);
+
+          console.log(formattedNoiseSensitivityScaleData);
+
+          // setJsonData(
+          //   JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
+          // );
 
           setJsonData(JSON.stringify(sensitivityScaleData, null, 2));
         }

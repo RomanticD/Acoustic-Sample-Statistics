@@ -50,20 +50,14 @@ export interface FormattedExperimentData {
   evaluations: SamplesEvaluationByParticipant[];
 }
 
-export interface NoiseSensitivityScaleData {
-  participant: Participant;
-  evaluation: {
-    questionId: number;
-    sensitiveValue: number;
-  };
+export interface QuestionInfo {
+  questionId: number;
+  sensitiveValue: number;
 }
 
-export interface FormattedNoiseSensitivityScaleData {
+export interface NoiseSensitivityScaleData {
   participant: Participant;
-  evaluation: {
-    questionId: number;
-    sensitiveValue: number;
-  }[];
+  currentParticipantEvaluation: QuestionInfo;
 }
 
 export interface NoiseSensitivityScaleDataExperimentData {
@@ -71,7 +65,12 @@ export interface NoiseSensitivityScaleDataExperimentData {
   evaluations: NoiseSensitivityScaleData[];
 }
 
-export interface FormattedNoiseSensitivityScaleDataExperimentData {
+export interface FormattedNoiseSensitivityScaleData {
   experiment: Experiment;
-  evaluations: NoiseSensitivityScaleData[];
+  allEvaluations: {
+    currentParticipantEvaluation: {
+      participant: Participant;
+      evaluations: QuestionInfo[];
+    }[];
+  };
 }

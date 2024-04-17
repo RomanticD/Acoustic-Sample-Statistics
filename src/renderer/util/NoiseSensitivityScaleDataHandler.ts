@@ -1,9 +1,11 @@
 import Excel from 'exceljs';
 import {
   Experiment,
+  FormattedNoiseSensitivityScaleData,
   NoiseSensitivityScaleData,
   NoiseSensitivityScaleDataExperimentData,
   Participant,
+  QuestionInfo,
   Sample,
 } from '../model/ExperimentDataModel';
 
@@ -32,14 +34,20 @@ export function handleNoiseSensitivityScaleData(
             missingIndex += 1
           ) {
             noiseSensitivityScaleData.push({
-              evaluation: { questionId: index - 1, sensitiveValue: 3 },
+              currentParticipantEvaluation: {
+                questionId: index - 1,
+                sensitiveValue: 3,
+              },
               participant: currentParticipant,
             });
           }
         }
 
         noiseSensitivityScaleData.push({
-          evaluation: { questionId: index - 1, sensitiveValue: value },
+          currentParticipantEvaluation: {
+            questionId: index - 1,
+            sensitiveValue: value,
+          },
           participant: currentParticipant,
         });
 
@@ -61,7 +69,7 @@ export function getNoiseSensitivityScaleData(
   const samples: Sample[] = uniqueSamples.map((sampleName, index) => {
     const type = 'test';
     return {
-      id: index,
+      id: index + 1,
       name: sampleName,
       type,
     };
@@ -73,4 +81,54 @@ export function getNoiseSensitivityScaleData(
   };
 
   return { evaluations: noiseSensitivityScaleData, experiment };
+}
+
+export function getFormattedNoiseSensitivityScaleData(
+  originData: NoiseSensitivityScaleDataExperimentData,
+): FormattedNoiseSensitivityScaleData {
+  const originExperiment: Experiment = originData.experiment;
+  const originEvaluations: NoiseSensitivityScaleData[] = originData.evaluations;
+  const evaluationBySingleParticipant: {
+    participant: Participant;
+    evaluations: QuestionInfo[];
+  }[] = [];
+
+  // 分类 originEvaluations 中的数据
+  const groupedEvaluations: { [key: string]: NoiseSensitivityScaleData[] } = {};
+
+  originEvaluations.forEach((evaluation) => {
+    const key = evaluation.participant.id.toString();
+
+    if (!groupedEvaluations[key]) {
+      groupedEvaluations[key] = [];
+    }
+
+    groupedEvaluations[key].push(evaluation);
+  });
+
+  // 将分类后的数据放入 evaluationBySingleParticipant
+  // eslint-disable-next-line no-restricted-syntax,@typescript-eslint/no-unused-vars
+  for (const [participantId, evaluations] of Object.entries(
+    groupedEvaluations,
+  )) {
+    const { participant } = evaluations[0]; // 假设每个 participant 对象中的数据都是相同的
+    const EvaluationQuestionInfo: QuestionInfo[] = evaluations.map(
+      (evaluation) => ({
+        questionId: evaluation.currentParticipantEvaluation.questionId,
+        sensitiveValue: evaluation.currentParticipantEvaluation.sensitiveValue,
+      }),
+    );
+
+    evaluationBySingleParticipant.push({
+      participant,
+      evaluations: EvaluationQuestionInfo,
+    });
+  }
+
+  return {
+    experiment: originExperiment,
+    allEvaluations: {
+      currentParticipantEvaluation: evaluationBySingleParticipant,
+    },
+  };
 }
