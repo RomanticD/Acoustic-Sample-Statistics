@@ -21,7 +21,7 @@ export interface Evaluation {
 }
 
 export interface Experiment {
-  scale: 'word' | 'digital' | 'noise sensitivity';
+  scale: 'word' | 'digital' | 'noise sensitivity' | 'acoustic parameter';
   samples: Sample[]; // 实验中的声样本数组
 }
 
@@ -71,6 +71,26 @@ export interface FormattedNoiseSensitivityScaleData {
     currentParticipantEvaluation: {
       participant: Participant;
       evaluations: QuestionInfo[];
+    }[];
+  };
+}
+
+export interface EvaluationForSameAcousticParameterSample {
+  value: number;
+  channel: 'R' | 'L';
+}
+
+export interface acousticParameterEvaluationsInfo {
+  sampleId: number;
+  evaluationsForSingleSample: EvaluationForSameAcousticParameterSample[];
+}
+
+export interface acousticParameterTableData {
+  experiment: Experiment;
+  allEvaluations: {
+    currentParticipantEvaluation: {
+      participant: Participant;
+      evaluations: acousticParameterEvaluationsInfo[];
     }[];
   };
 }
