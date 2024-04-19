@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import './FileInputUtil.css';
 import Excel from 'exceljs';
 import {
+  acousticParameterTableData,
   Evaluation,
   NoiseSensitivityScaleData,
+  SingleSampleAndItsParameters,
 } from '../model/ExperimentDataModel';
 import {
   handleDigitalAndNumberScaleDataToJson,
@@ -71,6 +73,7 @@ function ExcelToJsonConverter() {
       const sampleNamesArr: string[] = [];
       const noiseSensitivityScaleEvaluationData: NoiseSensitivityScaleData[] =
         [];
+      const acousticParameterData: SingleSampleAndItsParameters[] = [];
 
       try {
         const workbook = new Excel.Workbook();
@@ -94,7 +97,7 @@ function ExcelToJsonConverter() {
                     noiseSensitivityScaleEvaluationData,
                   );
                 } else if (scale === 'acoustic parameter') {
-                  handleAcousticParameterData();
+                  handleAcousticParameterData(row, acousticParameterData);
                 }
               } else {
                 handleSampleNames(row, sampleNamesArr);
@@ -103,6 +106,8 @@ function ExcelToJsonConverter() {
             isFirstSheet = false;
           }
         });
+
+        console.log(sampleNamesArr);
 
         if (scale === 'digital' || scale === 'word') {
           const experimentData = getExperimentData(
@@ -136,11 +141,11 @@ function ExcelToJsonConverter() {
 
           console.log(formattedNoiseSensitivityScaleData);
 
-          // setJsonData(
-          //   JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
-          // );
-
-          setJsonData(JSON.stringify(sensitivityScaleData, null, 2));
+          setJsonData(
+            JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
+          );
+        } else if (scale === 'acoustic parameter') {
+          // 显示处理后的声学参量表
         }
 
         isFirstSheet = true;

@@ -80,17 +80,17 @@ export interface EvaluationForSameAcousticParameterSample {
   channel: 'R' | 'L';
 }
 
-export interface acousticParameterEvaluationsInfo {
-  sampleId: number;
-  evaluationsForSingleSample: EvaluationForSameAcousticParameterSample[];
+export interface AcousticParameterEvaluationsInfo {
+  parameterName: string;
+  singleParameterInfo: EvaluationForSameAcousticParameterSample[];
+}
+
+export interface SingleSampleAndItsParameters {
+  sampleName: string;
+  ParametersInfo: AcousticParameterEvaluationsInfo[];
 }
 
 export interface acousticParameterTableData {
   experiment: Experiment;
-  allEvaluations: {
-    currentParticipantEvaluation: {
-      participant: Participant;
-      evaluations: acousticParameterEvaluationsInfo[];
-    }[];
-  };
+  allSamplesWithAcousticalParameterInfo: SingleSampleAndItsParameters[];
 }

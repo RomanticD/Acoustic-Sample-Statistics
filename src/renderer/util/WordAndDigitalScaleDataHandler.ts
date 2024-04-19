@@ -6,8 +6,6 @@ import {
   Experiment,
   ExperimentData,
   FormattedExperimentData,
-  NoiseSensitivityScaleData,
-  NoiseSensitivityScaleDataExperimentData,
   Participant,
   Sample,
   SamplesEvaluationByParticipant,
