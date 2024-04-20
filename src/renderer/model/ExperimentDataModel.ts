@@ -87,7 +87,7 @@ export interface AcousticParameterEvaluationsInfo {
 
 export interface SingleSampleAndItsParameters {
   sampleName: string;
-  ParametersInfo: AcousticParameterEvaluationsInfo[];
+  parametersInfo: AcousticParameterEvaluationsInfo[];
 }
 
 export interface acousticParameterTableData {

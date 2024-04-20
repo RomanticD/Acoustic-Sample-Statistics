@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './FileInputUtil.css';
 import Excel from 'exceljs';
 import {
-  acousticParameterTableData,
   Evaluation,
   NoiseSensitivityScaleData,
   SingleSampleAndItsParameters,
@@ -97,7 +96,11 @@ function ExcelToJsonConverter() {
                     noiseSensitivityScaleEvaluationData,
                   );
                 } else if (scale === 'acoustic parameter') {
-                  handleAcousticParameterData(row, acousticParameterData);
+                  handleAcousticParameterData(
+                    row,
+                    acousticParameterData,
+                    sampleNamesArr,
+                  );
                 }
               } else {
                 handleSampleNames(row, sampleNamesArr);
@@ -106,8 +109,6 @@ function ExcelToJsonConverter() {
             isFirstSheet = false;
           }
         });
-
-        console.log(sampleNamesArr);
 
         if (scale === 'digital' || scale === 'word') {
           const experimentData = getExperimentData(
