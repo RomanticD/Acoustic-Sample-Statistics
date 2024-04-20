@@ -90,7 +90,7 @@ export interface SingleSampleAndItsParameters {
   parametersInfo: AcousticParameterEvaluationsInfo[];
 }
 
-export interface acousticParameterTableData {
+export interface AcousticParameterTableData {
   experiment: Experiment;
   allSamplesWithAcousticalParameterInfo: SingleSampleAndItsParameters[];
 }

@@ -4,7 +4,6 @@ import Excel from 'exceljs';
 import {
   Evaluation,
   NoiseSensitivityScaleData,
-  SingleSampleAndItsParameters,
 } from '../model/ExperimentDataModel';
 import {
   handleDigitalAndNumberScaleDataToJson,
@@ -20,7 +19,9 @@ import {
   getNoiseSensitivityScaleData,
   handleNoiseSensitivityScaleData,
 } from '../util/NoiseSensitivityScaleDataHandler';
-import handleAcousticParameterData from '../util/AcousticParameterDataHandler';
+import handleAcousticParameterData, {
+  getFormattedAcousticParameterData,
+} from '../util/AcousticParameterDataHandler';
 
 let scale = '';
 
@@ -72,7 +73,7 @@ function ExcelToJsonConverter() {
       const sampleNamesArr: string[] = [];
       const noiseSensitivityScaleEvaluationData: NoiseSensitivityScaleData[] =
         [];
-      const acousticParameterData: SingleSampleAndItsParameters[] = [];
+      const acousticParameterData: any[] = [];
 
       try {
         const workbook = new Excel.Workbook();
@@ -140,13 +141,17 @@ function ExcelToJsonConverter() {
           const formattedNoiseSensitivityScaleData =
             getFormattedNoiseSensitivityScaleData(sensitivityScaleData);
 
-          console.log(formattedNoiseSensitivityScaleData);
-
           setJsonData(
             JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
           );
         } else if (scale === 'acoustic parameter') {
-          // 显示处理后的声学参量表
+          setJsonData(
+            JSON.stringify(
+              getFormattedAcousticParameterData(acousticParameterData),
+              null,
+              2,
+            ),
+          );
         }
 
         isFirstSheet = true;
