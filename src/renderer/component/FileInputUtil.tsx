@@ -23,12 +23,13 @@ import handleAcousticParameterData, {
   getFormattedAcousticParameterData,
 } from '../util/AcousticParameterDataHandler';
 
-let scale = '';
-
-function ExcelToJsonConverter() {
+// @ts-ignore
+// eslint-disable-next-line react/prop-types
+function ExcelToJsonConverter({ description }) {
   const [file, setFile] = useState(null);
   const [jsonData, setJsonData] = useState('');
   const [fileName, setFileName] = useState('');
+  const [scale, setScale] = useState('');
 
   // @ts-ignore
   const handleFileChange = (e) => {
@@ -36,18 +37,17 @@ function ExcelToJsonConverter() {
     const selectedFile = e.target.files[0];
 
     if (selectedFile) {
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      const fileName = selectedFile.name;
+      const selectedFileName = selectedFile.name;
 
-      if (keywords.some((keyword) => fileName.includes(keyword))) {
+      if (keywords.some((keyword) => selectedFileName.includes(keyword))) {
         setFile(selectedFile);
-        setFileName(fileName);
-        scale = getScale(fileName);
+        setFileName(selectedFileName);
+        setScale(getScale(selectedFileName));
       } else {
         // 文件名不符合要求，给出警告并重置文件选择
         window.alert('请选择量表类型文件');
         e.target.value = null; // 重置文件选择
-        setFileName('选择文件'); // 重置文件名显示
+        setFileName(`选择文件${description}`); // 重置文件名显示
       }
     } else {
       window.alert('文件选择失效');
@@ -166,11 +166,12 @@ function ExcelToJsonConverter() {
   return (
     <div className="file-input-container">
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label htmlFor="file-input" className="file-input-label">
-        <span className="upload-icon">📁</span> {fileName || '选择量表'}
+      <label htmlFor={`file-input-${description}`} className="file-input-label">
+        <span className="upload-icon">📁</span>{' '}
+        {fileName || `选择文件 ${description}`}
       </label>
       <input
-        id="file-input"
+        id={`file-input-${description}`}
         type="file"
         accept=".xls,.xlsx"
         // @ts-ignore

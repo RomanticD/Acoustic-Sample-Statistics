@@ -363,9 +363,6 @@ export function filterInvalidExperimentData(
           filteredSingleSampleEvaluationBySingleParticipantArr,
       };
 
-      console.log(participant);
-      console.log(invalidSampleCount);
-
       if (
         invalidSampleCount <
         formattedExperimentData.experiment.samples.length * 0.3

@@ -1,4 +1,4 @@
-import { MemoryRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';

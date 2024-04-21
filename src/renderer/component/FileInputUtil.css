@@ -1,12 +1,15 @@
 .file-input-container {
-  height: 90vh;
   width: 100%;
-  margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 
@@ -14,7 +17,7 @@
   display: block;
   background-color: rgba(255, 255, 255, 0.7); /* 设置毛玻璃效果 */
   border-radius: 120px;
-  padding: 5px;
+  padding: 10px 20px;
   cursor: pointer;
   text-align: center;
   color: black; /* 设置黑色文字 */
@@ -32,11 +35,11 @@
 
 .button {
   padding: 8px 16px;
-  margin: 10px;
+  margin: 10px auto;
   background-color: #007bff;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
 }
 
@@ -45,12 +48,13 @@
 }
 
 .json-data {
-  /*max-height: 300px;*/
-  min-height: 500px;
-  width: 700px;
-  background-color: #f8f9fa;
+  width: 500px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
   color: black;
+  height: 20vh;
+  overflow-y: auto;
+  scrollbar-color: #fff transparent;
 }
