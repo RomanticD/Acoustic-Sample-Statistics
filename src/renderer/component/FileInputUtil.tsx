@@ -26,8 +26,6 @@ import handleAcousticParameterData, {
   getFormattedAcousticParameterData,
 } from '../util/AcousticParameterDataHandler';
 
-// @ts-ignore
-// eslint-disable-next-line react/prop-types
 function ExcelToJsonConverter({
   description,
   dataObtained,
@@ -60,25 +58,48 @@ function ExcelToJsonConverter({
 
   // @ts-ignore
   const handleFileChange = (e) => {
-    const keywords = ['数字', '词语', '敏感性', '声学参量'];
     const selectedFile = e.target.files[0];
 
-    if (selectedFile) {
-      const selectedFileName = selectedFile.name;
-
-      if (keywords.some((keyword) => selectedFileName.includes(keyword))) {
-        setFile(selectedFile);
-        setFileName(selectedFileName);
-        setScale(getScale(selectedFileName));
-      } else {
-        // 文件名不符合要求，给出警告并重置文件选择
-        window.alert('请选择量表类型文件');
-        e.target.value = null; // 重置文件选择
-        setFileName(`选择文件${description}`); // 重置文件名显示
-      }
-    } else {
+    if (!selectedFile) {
       window.alert('文件选择失效');
+      return;
     }
+
+    const selectedFileName = selectedFile.name;
+
+    const checkFileName = (keywords: string[]) => {
+      return keywords.some((keyword) => selectedFileName.includes(keyword));
+    };
+
+    const showErrorAndReset = (message: string) => {
+      window.alert(message);
+      e.target.value = null;
+      setFileName(`选择文件 ${description}`);
+    };
+
+    const handleDescription = (keywords: string[]) => {
+      if (!checkFileName(keywords)) {
+        showErrorAndReset('请选择指定类型文件');
+        return false;
+      }
+      return true;
+    };
+
+    switch (description) {
+      case '被试者数据':
+        if (!handleDescription(['数字', '词语'])) return;
+        break;
+      case '声学参量表':
+        if (!handleDescription(['声学参量表'])) return;
+        break;
+      default:
+        showErrorAndReset('请重试');
+        return;
+    }
+
+    setFile(selectedFile);
+    setFileName(selectedFileName);
+    setScale(getScale(selectedFileName));
   };
 
   const handleConvert = async () => {
@@ -186,7 +207,6 @@ function ExcelToJsonConverter({
         dataObtained(jsonData);
         isFirstSheet = true;
       } catch (error) {
-        console.error(error);
         // @ts-ignore
         window.alert(`Error:${error.message}`);
       }
@@ -209,7 +229,7 @@ function ExcelToJsonConverter({
         className="file-input"
       />
       <button type="button" onClick={handleConvert} className="button">
-        Convert
+        确定
       </button>
       <pre className="json-data">{displayData}</pre>
     </div>

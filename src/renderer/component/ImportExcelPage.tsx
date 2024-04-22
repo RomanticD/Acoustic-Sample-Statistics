@@ -79,8 +79,14 @@ export default function ImportExcelPage() {
   return (
     <div className="select-excel-page">
       <TopNavbar />
-      <FileInputUtil description="1" dataObtained={handleReceivedData} />
-      <FileInputUtil description="2" dataObtained={handleReceivedData} />
+      <FileInputUtil
+        description="被试者数据"
+        dataObtained={handleReceivedData}
+      />
+      <FileInputUtil
+        description="声学参量表"
+        dataObtained={handleReceivedData}
+      />
       {/* <InfoDisplay formData={JSON.stringify(receivedData)} /> */}
     </div>
   );
