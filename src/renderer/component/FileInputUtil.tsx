@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './FileInputUtil.css';
 import Excel from 'exceljs';
 import {
+  AcousticParameterTableData,
   Evaluation,
   FormattedExperimentData,
+  FormattedNoiseSensitivityScaleData,
   NoiseSensitivityScaleData,
 } from '../model/ExperimentDataModel';
 import {
@@ -31,15 +33,30 @@ function ExcelToJsonConverter({
   dataObtained,
 }: {
   description: string;
-  dataObtained: (data: FormattedExperimentData | null) => void;
+  dataObtained: (
+    data:
+      | AcousticParameterTableData
+      | FormattedNoiseSensitivityScaleData
+      | FormattedExperimentData
+      | null,
+  ) => void;
 }) {
   const [file, setFile] = useState(null);
-  const [jsonData, setJsonData] = useState<FormattedExperimentData | null>(
-    null,
-  );
+  const [jsonData, setJsonData] = useState<
+    | AcousticParameterTableData
+    | FormattedNoiseSensitivityScaleData
+    | FormattedExperimentData
+    | null
+  >(null);
   const [displayData, setDisplayData] = useState('');
   const [fileName, setFileName] = useState('');
   const [scale, setScale] = useState('');
+
+  useEffect(() => {
+    if (jsonData !== null) {
+      dataObtained(jsonData);
+    }
+  }, [dataObtained, jsonData]);
 
   // @ts-ignore
   const handleFileChange = (e) => {
@@ -139,8 +156,8 @@ function ExcelToJsonConverter({
           );
 
           setDisplayData(JSON.stringify(validExperimentData, null, 2));
+
           setJsonData(validExperimentData);
-          dataObtained(jsonData);
         } else if (scale === 'noise sensitivity') {
           const sensitivityScaleData = getNoiseSensitivityScaleData(
             sampleNamesArr,
@@ -153,6 +170,8 @@ function ExcelToJsonConverter({
           setDisplayData(
             JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
           );
+
+          setJsonData(formattedNoiseSensitivityScaleData);
         } else if (scale === 'acoustic parameter') {
           setDisplayData(
             JSON.stringify(
@@ -161,8 +180,10 @@ function ExcelToJsonConverter({
               2,
             ),
           );
-        }
 
+          setJsonData(getFormattedAcousticParameterData(acousticParameterData));
+        }
+        dataObtained(jsonData);
         isFirstSheet = true;
       } catch (error) {
         console.error(error);

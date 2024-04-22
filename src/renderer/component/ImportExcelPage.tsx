@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
 import TopNavbar from './NavBar';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import InfoDisplay from './InfoDisplay';
-import { FormattedExperimentData } from '../model/ExperimentDataModel';
+import {
+  AcousticParameterTableData,
+  FormattedExperimentData,
+  FormattedNoiseSensitivityScaleData,
+} from '../model/ExperimentDataModel';
 
 export default function ImportExcelPage() {
-  const [receivedData, setReceivedData] =
-    useState<FormattedExperimentData | null>(null);
+  const [receivedData, setReceivedData] = useState<
+    | AcousticParameterTableData
+    | FormattedNoiseSensitivityScaleData
+    | FormattedExperimentData
+    | null
+  >(null);
+  const [dataList, setDataList] = React.useState<
+    Array<
+      | AcousticParameterTableData
+      | FormattedNoiseSensitivityScaleData
+      | FormattedExperimentData
+    >
+  >([]);
 
-  // @ts-ignore
-  const handleReceivedData = (data: FormattedExperimentData | null) => {
+  const handleReceivedData = (
+    data:
+      | AcousticParameterTableData
+      | FormattedNoiseSensitivityScaleData
+      | FormattedExperimentData
+      | null,
+  ) => {
+    if (data) {
+      if (
+        !dataList.some((item) => JSON.stringify(item) === JSON.stringify(data))
+      ) {
+        setDataList((prevDataList) => [...prevDataList, data]);
+      }
+    }
     // @ts-ignore
     setReceivedData(data);
   };
@@ -44,7 +71,10 @@ export default function ImportExcelPage() {
   ];
 
   const testDisplayData = JSON.parse(JSON.stringify(receivedData));
-  console.log(testDisplayData);
+  useEffect(() => {
+    console.log(testDisplayData);
+    console.log(dataList);
+  }, [dataList, receivedData, testDisplayData]);
 
   return (
     <div className="select-excel-page">
