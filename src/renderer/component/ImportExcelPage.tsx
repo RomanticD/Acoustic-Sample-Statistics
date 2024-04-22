@@ -2,16 +2,21 @@ import React, { useState } from 'react';
 import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
 import TopNavbar from './NavBar';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import InfoDisplay from './InfoDisplay';
+import { FormattedExperimentData } from '../model/ExperimentDataModel';
 
 export default function ImportExcelPage() {
-  const [receivedData, setReceivedData] = useState([]);
+  const [receivedData, setReceivedData] =
+    useState<FormattedExperimentData | null>(null);
 
   // @ts-ignore
-  const handleReceivedData = (data) => {
+  const handleReceivedData = (data: FormattedExperimentData | null) => {
+    // @ts-ignore
     setReceivedData(data);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dataSample = [
     [50, Math.log10(1)],
     [60, Math.log10(2)],
@@ -38,13 +43,15 @@ export default function ImportExcelPage() {
     [95, 0.991],
   ];
 
-  console.log(`received: ${JSON.stringify(receivedData)}`);
+  const testDisplayData = JSON.parse(JSON.stringify(receivedData));
+  console.log(testDisplayData);
+
   return (
     <div className="select-excel-page">
       <TopNavbar />
       <FileInputUtil description="1" dataObtained={handleReceivedData} />
       <FileInputUtil description="2" dataObtained={handleReceivedData} />
-      <InfoDisplay formData={receivedData} />
+      {/* <InfoDisplay formData={JSON.stringify(receivedData)} /> */}
     </div>
   );
 }

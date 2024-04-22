@@ -3,6 +3,7 @@ import './FileInputUtil.css';
 import Excel from 'exceljs';
 import {
   Evaluation,
+  FormattedExperimentData,
   NoiseSensitivityScaleData,
 } from '../model/ExperimentDataModel';
 import {
@@ -25,9 +26,18 @@ import handleAcousticParameterData, {
 
 // @ts-ignore
 // eslint-disable-next-line react/prop-types
-function ExcelToJsonConverter({ description, dataObtained }) {
+function ExcelToJsonConverter({
+  description,
+  dataObtained,
+}: {
+  description: string;
+  dataObtained: (data: FormattedExperimentData | null) => void;
+}) {
   const [file, setFile] = useState(null);
-  const [jsonData, setJsonData] = useState('');
+  const [jsonData, setJsonData] = useState<FormattedExperimentData | null>(
+    null,
+  );
+  const [displayData, setDisplayData] = useState('');
   const [fileName, setFileName] = useState('');
   const [scale, setScale] = useState('');
 
@@ -128,9 +138,9 @@ function ExcelToJsonConverter({ description, dataObtained }) {
             formattedExperimentData,
           );
 
-          // setJsonData(JSON.stringify(formattedExperimentData, null, 2));
-          setJsonData(JSON.stringify(validExperimentData, null, 2));
-          dataObtained({ data: jsonData });
+          setDisplayData(JSON.stringify(validExperimentData, null, 2));
+          setJsonData(validExperimentData);
+          dataObtained(jsonData);
         } else if (scale === 'noise sensitivity') {
           const sensitivityScaleData = getNoiseSensitivityScaleData(
             sampleNamesArr,
@@ -140,11 +150,11 @@ function ExcelToJsonConverter({ description, dataObtained }) {
           const formattedNoiseSensitivityScaleData =
             getFormattedNoiseSensitivityScaleData(sensitivityScaleData);
 
-          setJsonData(
+          setDisplayData(
             JSON.stringify(formattedNoiseSensitivityScaleData, null, 2),
           );
         } else if (scale === 'acoustic parameter') {
-          setJsonData(
+          setDisplayData(
             JSON.stringify(
               getFormattedAcousticParameterData(acousticParameterData),
               null,
@@ -180,7 +190,7 @@ function ExcelToJsonConverter({ description, dataObtained }) {
       <button type="button" onClick={handleConvert} className="button">
         Convert
       </button>
-      <pre className="json-data">{jsonData}</pre>
+      <pre className="json-data">{displayData}</pre>
     </div>
   );
 }
