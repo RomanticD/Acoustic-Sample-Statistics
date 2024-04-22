@@ -100,10 +100,12 @@
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "exceljs": "^4.4.0",
+    "mathjs": "^12.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.2",
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "regression": "^2.0.1"
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
@@ -118,6 +120,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/react-test-renderer": "^18.0.1",
+    "@types/regression": "^2.0.6",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-bundle-analyzer": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^6.7.0",

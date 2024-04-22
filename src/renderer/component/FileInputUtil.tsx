@@ -25,7 +25,7 @@ import handleAcousticParameterData, {
 
 // @ts-ignore
 // eslint-disable-next-line react/prop-types
-function ExcelToJsonConverter({ description }) {
+function ExcelToJsonConverter({ description, dataObtained }) {
   const [file, setFile] = useState(null);
   const [jsonData, setJsonData] = useState('');
   const [fileName, setFileName] = useState('');
@@ -130,8 +130,7 @@ function ExcelToJsonConverter({ description }) {
 
           // setJsonData(JSON.stringify(formattedExperimentData, null, 2));
           setJsonData(JSON.stringify(validExperimentData, null, 2));
-
-          console.log(validExperimentData);
+          dataObtained({ data: jsonData });
         } else if (scale === 'noise sensitivity') {
           const sensitivityScaleData = getNoiseSensitivityScaleData(
             sampleNamesArr,
