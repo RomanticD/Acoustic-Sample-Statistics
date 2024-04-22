@@ -215,7 +215,6 @@ function ExcelToJsonConverter({
   };
   return (
     <div className="file-input-container">
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor={`file-input-${description}`} className="file-input-label">
         <span className="upload-icon">📁</span>{' '}
         {fileName || `选择文件 ${description}`}
@@ -224,7 +223,6 @@ function ExcelToJsonConverter({
         id={`file-input-${description}`}
         type="file"
         accept=".xls,.xlsx"
-        // @ts-ignore
         onChange={handleFileChange}
         className="file-input"
       />

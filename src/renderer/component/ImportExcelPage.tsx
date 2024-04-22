@@ -3,7 +3,6 @@ import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
 import TopNavbar from './NavBar';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import InfoDisplay from './InfoDisplay';
 import {
   AcousticParameterTableData,
   FormattedExperimentData,
@@ -33,10 +32,20 @@ export default function ImportExcelPage() {
       | null,
   ) => {
     if (data) {
-      if (
-        !dataList.some((item) => JSON.stringify(item) === JSON.stringify(data))
-      ) {
-        setDataList((prevDataList) => [...prevDataList, data]);
+      // 检查数据是否已存在于 dataList
+      const dataExists = dataList.some(
+        (item) => JSON.stringify(item) === JSON.stringify(data),
+      );
+
+      // 如果数据不存在于 dataList，则将其添加到 dataList
+      if (!dataExists) {
+        setDataList((prevDataList) => {
+          // 取出 dataList 的最后两项
+          const lastTwoItems = prevDataList.slice(-1);
+
+          // 将新数据与最后两项合并
+          return [...lastTwoItems, data];
+        });
       }
     }
     // @ts-ignore

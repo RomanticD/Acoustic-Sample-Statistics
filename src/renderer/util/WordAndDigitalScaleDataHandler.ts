@@ -288,12 +288,14 @@ export function filterInvalidExperimentData(
 ): FormattedExperimentData {
   // @ts-ignore
   const experimentDataFromInput = formattedExperimentData.experiment;
+  const numberOfSamples = formattedExperimentData.experiment.samples.length;
+  const MaximumNumberOfInvalidDataAllowed = numberOfSamples * 0.3;
   const { scale } = experimentDataFromInput;
   let invalidSampleCount: number = 0;
   const deviationAllowed: number = scale === 'word' ? 2.5 : 2;
   const evaluationsDataFromInput = formattedExperimentData.evaluations;
-
   const filteredEvaluationsData: SamplesEvaluationByParticipant[] = [];
+
   evaluationsDataFromInput.forEach(
     // 对于一个人的所有评价
     (singlePersonEvaluations: SamplesEvaluationByParticipant) => {
@@ -304,6 +306,12 @@ export function filterInvalidExperimentData(
       let filteredSingleSampleEvaluationBySingleParticipant: EvaluationBySingleParticipant;
       const filteredSingleSampleEvaluationBySingleParticipantArr: EvaluationBySingleParticipant[] =
         [];
+
+      if (currentParticipantEvaluations.length !== numberOfSamples) {
+        // 跳过的空白单元格直接算作无效数据
+        invalidSampleCount +=
+          numberOfSamples - currentParticipantEvaluations.length;
+      }
 
       currentParticipantEvaluations.forEach(
         // 对单一样本的评价
@@ -363,10 +371,7 @@ export function filterInvalidExperimentData(
           filteredSingleSampleEvaluationBySingleParticipantArr,
       };
 
-      if (
-        invalidSampleCount <
-        formattedExperimentData.experiment.samples.length * 0.3
-      ) {
+      if (invalidSampleCount < MaximumNumberOfInvalidDataAllowed) {
         filteredEvaluationsData.push(filteredEvaluationsBySingleParticipant); // 如果无效数据大于百分之三十，则去除该被试所有数据
       }
 
@@ -374,10 +379,8 @@ export function filterInvalidExperimentData(
     },
   );
 
-  const filteredData: FormattedExperimentData = {
+  return {
     experiment: experimentDataFromInput,
     evaluations: filteredEvaluationsData,
   };
-
-  return filteredData;
 }
