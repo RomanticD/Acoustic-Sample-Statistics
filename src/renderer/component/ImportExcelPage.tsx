@@ -8,6 +8,9 @@ import {
   FormattedExperimentData,
   FormattedNoiseSensitivityScaleData,
 } from '../model/ExperimentDataModel';
+import separateList, {
+  getExperimentDataAfterAveragingTheRatingOfSamples,
+} from '../util/DataListHandler';
 
 export default function ImportExcelPage() {
   const [receivedData, setReceivedData] = useState<
@@ -84,6 +87,13 @@ export default function ImportExcelPage() {
     console.log(testDisplayData);
     console.log(dataList);
   }, [dataList, receivedData, testDisplayData]);
+
+  const { acousticParameterTableData, experimentData } =
+    separateList(dataList) ?? {};
+
+  console.log(
+    getExperimentDataAfterAveragingTheRatingOfSamples(experimentData),
+  );
 
   return (
     <div className="select-excel-page">
