@@ -111,7 +111,7 @@ function getDetailsFromEvaluationsWithSameName(
   evaluationsWithSameSampleName: {
     sampleName: string;
     rating?: number;
-    numberOfEvaluation: 1 | 2 | 3;
+    numberOfEvaluation?: 1 | 2 | 3;
   }[],
 ): EvaluationDetail[] {
   const details: EvaluationDetail[] = [];

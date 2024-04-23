@@ -214,9 +214,43 @@ export function calibrateExperimentData(
   const experimentDataAfterRatingsAveraged =
     getExperimentDataAfterAveragingTheRatingOfSamples(experimentData);
 
-  const resultData = fitAndCalibrateToPinkNoiseSamples(
-    experimentDataAfterRatingsAveraged,
-  );
+  return fitAndCalibrateToPinkNoiseSamples(experimentDataAfterRatingsAveraged);
+}
 
-  return resultData;
+export function getAverageNoiseAnnoyanceForSamples(
+  dataIn: FormattedExperimentData | undefined,
+): { [sampleName: string]: number } {
+  const sampleNameAndItsAllEvaluations: { [sampleName: string]: number[] } = {};
+  const resultMap: { [sampleName: string]: number } = {};
+
+  if (!dataIn) return {};
+
+  dataIn.evaluations.forEach((evaluationBySingleParticipant) => {
+    evaluationBySingleParticipant.currentParticipantEvaluations.forEach(
+      (sampleEvaluation) => {
+        const currentSampleName = sampleEvaluation.sample.name;
+        const annoyance = sampleEvaluation.details[0].rating ?? -1;
+
+        if (!sampleNameAndItsAllEvaluations[currentSampleName]) {
+          sampleNameAndItsAllEvaluations[currentSampleName] = [];
+        }
+
+        sampleNameAndItsAllEvaluations[currentSampleName].push(annoyance);
+      },
+    );
+  });
+
+  function calculateAverage(numbers: number[]): number {
+    const sum = numbers.reduce((acc, cur) => acc + cur, 0);
+    return sum / numbers.length;
+  }
+
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
+  for (const sampleName in sampleNameAndItsAllEvaluations) {
+    const annoyance = sampleNameAndItsAllEvaluations[sampleName];
+    resultMap[sampleName] = calculateAverage(annoyance);
+  }
+
+  console.log(resultMap);
+  return resultMap;
 }

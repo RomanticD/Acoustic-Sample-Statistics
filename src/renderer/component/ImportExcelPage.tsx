@@ -7,7 +7,10 @@ import {
   FormattedExperimentData,
   FormattedNoiseSensitivityScaleData,
 } from '../model/ExperimentDataModel';
-import separateList, { calibrateExperimentData } from '../util/DataListHandler';
+import separateList, {
+  calibrateExperimentData,
+  getAverageNoiseAnnoyanceForSamples,
+} from '../util/DataListHandler';
 
 export default function ImportExcelPage() {
   const [dataList, setDataList] = React.useState<
@@ -46,7 +49,9 @@ export default function ImportExcelPage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { acousticParameterTableData, experimentData } =
       separateList(dataList) ?? {};
-    calibrateExperimentData(experimentData);
+    const dataAfterCalibrating = calibrateExperimentData(experimentData);
+    const sampleWithItsAveragedAnnoyance =
+      getAverageNoiseAnnoyanceForSamples(dataAfterCalibrating);
   }, [dataList]);
 
   return (
