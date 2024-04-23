@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
 import TopNavbar from './NavBar';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {
   AcousticParameterTableData,
   FormattedExperimentData,
   FormattedNoiseSensitivityScaleData,
 } from '../model/ExperimentDataModel';
-import separateList, {
-  getExperimentDataAfterAveragingTheRatingOfSamples,
-} from '../util/DataListHandler';
+import separateList, { calibrateExperimentData } from '../util/DataListHandler';
 
 export default function ImportExcelPage() {
-  const [receivedData, setReceivedData] = useState<
-    | AcousticParameterTableData
-    | FormattedNoiseSensitivityScaleData
-    | FormattedExperimentData
-    | null
-  >(null);
   const [dataList, setDataList] = React.useState<
     Array<
       | AcousticParameterTableData
@@ -51,49 +42,13 @@ export default function ImportExcelPage() {
         });
       }
     }
-    // @ts-ignore
-    setReceivedData(data);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const dataSample = [
-    [50, Math.log10(1)],
-    [60, Math.log10(2)],
-    [70, Math.log10(2)],
-    [80, Math.log10(4)],
-    [90, Math.log10(8)],
-  ];
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const dataTest = [
-    [30, -0.432],
-    [35, -0.319],
-    [40, -0.144],
-    [45, 0.158],
-    [50, 0.281],
-    [55, 0.344],
-    [60, 0.394],
-    [65, 0.525],
-    [70, 0.599],
-    [75, 0.741],
-    [80, 0.821],
-    [85, 0.906],
-    [90, 0.96],
-    [95, 0.991],
-  ];
-
-  const testDisplayData = JSON.parse(JSON.stringify(receivedData));
-  useEffect(() => {
-    console.log(testDisplayData);
-    console.log(dataList);
-  }, [dataList, receivedData, testDisplayData]);
-
   const { acousticParameterTableData, experimentData } =
     separateList(dataList) ?? {};
 
-  console.log(
-    getExperimentDataAfterAveragingTheRatingOfSamples(experimentData),
-  );
+  calibrateExperimentData(experimentData);
 
   return (
     <div className="select-excel-page">
