@@ -10,6 +10,7 @@ import { Question } from './model/QuestionModel';
 import DigitalScale from './component/scale/DigitalScale';
 import ImportExcelPage from './component/ImportExcelPage';
 import TopNavBar from './component/NavBar';
+import getLinearRegressionResult from './util/Algorithm';
 
 const eg: Question = {
   sampleId: 1,
@@ -74,7 +75,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Root />} />
         <Route path="/ImportExcel" element={<ImportExcelPage />} />
-        <Route path="/infoDisplay" element={<InfoDisplay formData={eg} />} />
+        <Route
+          path="/infoDisplay"
+          element={<InfoDisplay formData={getLinearRegressionResult([])} />}
+        />
       </Routes>
     </Router>
   );

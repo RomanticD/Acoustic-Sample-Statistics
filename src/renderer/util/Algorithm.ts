@@ -1,4 +1,4 @@
-import regression from 'regression';
+import regression, { Result } from 'regression';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const dataSample = [
@@ -27,7 +27,7 @@ const dataTest = [
   [95, 0.991],
 ];
 
-export default function getLinearRegressionResult(data: number[][]): any {
+export default function getLinearRegressionResult(data: number[][]): Result {
   // @ts-ignore
   return regression.linear(data, {
     precision: 3,

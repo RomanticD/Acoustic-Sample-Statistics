@@ -1,3 +1,4 @@
+import { Result } from 'regression';
 import {
   AcousticParameterTableData,
   EvaluationBySingleParticipant,
@@ -6,6 +7,7 @@ import {
   FormattedNoiseSensitivityScaleData,
   SamplesEvaluationByParticipant,
 } from '../model/ExperimentDataModel';
+import getLinearRegressionResult from './Algorithm';
 
 export default function separateList(
   dataList: Array<
@@ -84,14 +86,19 @@ function getExperimentDataAfterAveragingTheRatingOfSamples(
     evaluations: updatedEvaluations,
   };
 
+  console.log('求平均后');
   console.log(updatedExperimentData);
 
   return updatedExperimentData;
 }
 
+function getIndividualNoiseAnnoyanceReferenceCurve(data: number[][]): Result {
+  return getLinearRegressionResult(data);
+}
+
 function getCurrentParticipantEvaluationsForPinkNoise(
   participantEvaluation: SamplesEvaluationByParticipant,
-): number[][] {
+): Result {
   const pinkNoiseEvaluations: EvaluationBySingleParticipant[] = [];
 
   participantEvaluation.currentParticipantEvaluations.forEach(
@@ -109,10 +116,31 @@ function getCurrentParticipantEvaluationsForPinkNoise(
     const { name } = evaluation.sample;
     const loudnessLevel = parseFloat(name.split('-R')[1]);
 
-    ratingAndLoudnessLevelData.push([loudnessLevel, Math.log10(annoyance)]);
+    ratingAndLoudnessLevelData.push([
+      loudnessLevel,
+      Math.log10(annoyance !== 0 ? annoyance : 0.01), // 根据标准如果为0赋值0.01
+    ]);
   });
 
-  return ratingAndLoudnessLevelData;
+  return getIndividualNoiseAnnoyanceReferenceCurve(ratingAndLoudnessLevelData);
+}
+
+function calibrateDataBasedOnTheStandardCurve(
+  // eslint-disable-next-line camelcase
+  a_i: number,
+  // eslint-disable-next-line camelcase
+  b_i: number,
+  annoyance: number,
+): number {
+  // eslint-disable-next-line camelcase
+  const a_0 = 0.022;
+  // eslint-disable-next-line camelcase
+  const b_0 = -0.944;
+  // eslint-disable-next-line camelcase
+  const lgA = (a_0 / a_i) * (Math.log10(annoyance) - b_i) + b_0;
+  const A = 10 ** lgA;
+
+  return A > 10 ? 10 : A; // 校准后大于10的按10计算
 }
 
 function fitAndCalibrateToPinkNoiseSamples(
@@ -123,10 +151,16 @@ function fitAndCalibrateToPinkNoiseSamples(
   // eslint-disable-next-line no-restricted-syntax
   for (const participantEvaluation of originalData.evaluations) {
     const updatedParticipantEvaluations: EvaluationBySingleParticipant[] = [];
-
-    console.log(
-      getCurrentParticipantEvaluationsForPinkNoise(participantEvaluation),
+    const resultSet = getCurrentParticipantEvaluationsForPinkNoise(
+      participantEvaluation,
     );
+    const a: number = resultSet.equation[0];
+    const b: number = resultSet.equation[1];
+
+    // eslint-disable-next-line camelcase
+    const a_i: number = a === 0 || a === null ? 0.022 : a;
+    // eslint-disable-next-line camelcase
+    const b_i: number = b === 0 || b === null ? -0.944 : b;
 
     // 遍历当前受试者的每个声样本评价
     // eslint-disable-next-line no-restricted-syntax
@@ -135,13 +169,11 @@ function fitAndCalibrateToPinkNoiseSamples(
         (detail) => detail.rating || 0,
       ); // 如果 rating 为 undefined，使用 0
 
-      // 计算评价的平均值
-      const averageRating =
-        ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+      const annoyance = ratings[0];
 
-      // 创建新的评价详情，只保留平均评分
+      // 创建新的校准后的烦恼值
       const updatedEvaluationDetail: EvaluationDetail = {
-        rating: averageRating,
+        rating: calibrateDataBasedOnTheStandardCurve(a_i, b_i, annoyance),
       };
 
       const updatedSingleEvaluation: EvaluationBySingleParticipant = {
@@ -166,6 +198,7 @@ function fitAndCalibrateToPinkNoiseSamples(
     evaluations: updatedEvaluations,
   };
 
+  console.log('校准后');
   console.log(updatedExperimentData);
 
   return updatedExperimentData;
