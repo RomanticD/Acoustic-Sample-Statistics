@@ -16,7 +16,7 @@ import {
   getFormattedExperimentData,
   filterInvalidExperimentData,
 } from '../util/WordAndDigitalScaleDataHandler';
-import getScale from '../util/Helper';
+import getScale from '../util/Mapper';
 import {
   getFormattedNoiseSensitivityScaleData,
   getNoiseSensitivityScaleData,

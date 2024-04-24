@@ -3,6 +3,7 @@ import {
   AcousticParameterTableData,
   Sample,
 } from '../model/ExperimentDataModel';
+import { calculateLN } from './Algorithm';
 
 export default function handleAcousticParameterData(
   row: Excel.Row,
@@ -13,6 +14,7 @@ export default function handleAcousticParameterData(
   // @ts-ignore
   const rowInfo = [];
   let currentParameterInfo: any[] = [];
+  let LNInfo: any[] = [];
   // @ts-ignore
   row.values.forEach((value, index) => {
     let parameterName: string = '';
@@ -27,21 +29,44 @@ export default function handleAcousticParameterData(
 
       if (channel === 'L') {
         currentParameterInfo = [];
+        LNInfo = [];
         currentParameterInfo.push({
           channel,
           value,
         });
+
+        if (parameterName === 'N/sone') {
+          LNInfo.push({
+            channel,
+            value: calculateLN(value),
+          });
+        }
       } else {
         currentParameterInfo.push({
           channel,
           value,
         });
 
+        if (parameterName === 'N/sone') {
+          LNInfo.push({
+            channel,
+            value: calculateLN(value),
+          });
+        }
+
         const collectedCellInfo = {
           parameterName,
           singleParameterInfo: currentParameterInfo,
         };
+
         rowInfo.push(collectedCellInfo);
+        if (parameterName === 'N/sone') {
+          // 根据N计算LN，增加LN的数据
+          rowInfo.push({
+            parameterName: 'LN/phon',
+            singleParameterInfo: LNInfo,
+          });
+        }
       }
     }
   });
@@ -68,5 +93,34 @@ export function getFormattedAcousticParameterData(
   return {
     experiment: { scale: 'acoustic parameter', samples },
     allSamplesWithAcousticalParameterInfo: originData,
+  };
+}
+
+export function acousticParameterDataAfterMerging(
+  originData: AcousticParameterTableData | undefined,
+): AcousticParameterTableData | undefined {
+  if (!originData) return undefined;
+
+  return {
+    experiment: {
+      ...originData.experiment,
+      samples: [...originData.experiment.samples],
+    },
+    allSamplesWithAcousticalParameterInfo:
+      originData.allSamplesWithAcousticalParameterInfo.map((sampleInfo) => ({
+        sampleName: sampleInfo.sampleName,
+        parametersInfo: sampleInfo.parametersInfo.map((paramInfo) => ({
+          parameterName: paramInfo.parameterName,
+          singleParameterInfo: [
+            {
+              value:
+                paramInfo.singleParameterInfo.reduce(
+                  (acc, curr) => acc + curr.value,
+                  0,
+                ) / paramInfo.singleParameterInfo.length,
+            },
+          ],
+        })),
+      })),
   };
 }

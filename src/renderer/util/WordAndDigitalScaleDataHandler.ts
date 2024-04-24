@@ -10,7 +10,7 @@ import {
   Sample,
   SamplesEvaluationByParticipant,
 } from '../model/ExperimentDataModel';
-import { getSampleByName, getSoundAnnoyanceValue } from './Helper';
+import { getSampleByName, getSoundAnnoyanceValue } from './Mapper';
 
 /**
  * 将Excel行数据转换为评估数据的JSON格式。

@@ -33,3 +33,26 @@ export default function getLinearRegressionResult(data: number[][]): Result {
     precision: 3,
   });
 }
+
+export function processN5AndNData(NL: number, NR: number): number {
+  const exponentL = 1 / 0.669;
+  const exponentR = 1 / 0.699;
+
+  const termL = NL ** exponentL;
+  const termR = NR ** exponentR;
+
+  const NB = (termL + termR) ** 0.669;
+
+  return NB;
+}
+
+export function calculateLN(N: any): number {
+  const numberN = Number(N);
+
+  if (Number.isNaN(N)) {
+    return NaN;
+  }
+
+  const LN = 40 + 33.22 * Math.log10(numberN);
+  return LN;
+}

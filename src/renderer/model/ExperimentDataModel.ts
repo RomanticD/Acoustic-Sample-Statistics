@@ -77,7 +77,7 @@ export interface FormattedNoiseSensitivityScaleData {
 
 export interface EvaluationForSameAcousticParameterSample {
   value: number;
-  channel: 'R' | 'L';
+  channel?: 'R' | 'L';
 }
 
 export interface AcousticParameterEvaluationsInfo {

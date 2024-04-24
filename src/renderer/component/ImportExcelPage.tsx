@@ -12,6 +12,7 @@ import separateList, {
   getAverageNoiseAnnoyanceForSamples,
 } from '../util/DataListHandler';
 import InfoDisplay from './InfoDisplay';
+import { acousticParameterDataAfterMerging } from '../util/AcousticParameterDataHandler';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 export default function ImportExcelPage() {
@@ -54,13 +55,20 @@ export default function ImportExcelPage() {
   };
 
   useEffect(() => {
+    console.log(dataList);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { acousticParameterTableData, experimentData } =
       separateList(dataList) ?? {};
+
     const dataAfterCalibrating = calibrateExperimentData(experimentData);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sampleWithItsAveragedAnnoyance =
       getAverageNoiseAnnoyanceForSamples(dataAfterCalibrating);
+
+    const mergedAcousticParameterData = acousticParameterDataAfterMerging(
+      acousticParameterTableData,
+    );
+    console.log(mergedAcousticParameterData);
   }, [dataList]);
 
   return (
