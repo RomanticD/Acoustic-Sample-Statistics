@@ -1,27 +1,83 @@
 .info-display {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
   0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  padding: 20px;
-  /*margin: 20px;*/
-  /*width: 300px;*/
-  /*margin-right: 20px;*/
-  /*margin-top: 10px;*/
+  padding: 20px 50px;
+  margin-top: 20px;
   overflow-y: auto;
   column-span: all;
   text-align: center;
 }
 
 .data-container {
-  /*max-height: calc(100% - 50px);*/
+  max-height: 63vh;
 }
 
-h2 {
+.data-container h3 {
   margin-top: 0;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px; /* 表格与标题之间的间距 */
+  margin-bottom: 20px;
+  background-color: #ffffff; /* 白色背景 */
+  border-radius: 8px; /* 圆角边框 */
+  overflow: hidden; /* 防止边框溢出 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  color: #4e4d4d
+}
+
+th, td {
+  border: 1px solid #ccccff; /* 淡蓝色边框 */
+  padding: 8px 12px;
+  text-align: center; /* 文本水平居中 */
+}
+
+th {
+  background-color: #8c8cff; /* 淡蓝色表头背景 */
+  color: #ffffff; /* 白色文字 */
+}
+
+tr:nth-child(even) {
+  background-color: #e6e6ff; /* 淡紫色偶数行背景 */
+}
+
+tr:hover {
+  background-color: #ccccff; /* 淡蓝色鼠标悬停时的背景 */
+}
+
+.not-choose-message {
   color: #333;
 }
 
-p {
-  color: #cccccc;
+.number-of-selection-message {
+  color: #535353;
+  font-size: 4rem;
 }
+
+.none-data-div {
+}
+
+@keyframes countChange {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1); /* 在动画的一半时放大到1.2倍 */
+  }
+  to {
+    transform: scale(1); /* 回到原始大小 */
+  }
+}
+
+.count-change {
+  animation: countChange 0.2s ease-in-out;
+  display: inline-block;
+}
+
+

@@ -8,9 +8,9 @@ export default function TopNavbar() {
         <Link className="nav-link" to="/">
           主页
         </Link>
-        <Link className="nav-link" to="/infoDisplay">
-          数据分析
-        </Link>
+        {/* <Link className="nav-link" to="/infoDisplay"> */}
+        {/*  数据分析 */}
+        {/* </Link> */}
         <Link className="nav-link" to="/importExcel">
           导入表格
         </Link>

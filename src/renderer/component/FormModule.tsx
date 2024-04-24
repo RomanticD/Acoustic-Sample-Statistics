@@ -27,12 +27,12 @@ export default function FormModule({ onSubmitData }) {
             <input
               className="input-in-form-module"
               {...register(`firstName_${index}`)}
-              placeholder="First Name"
+              placeholder="姓氏"
             />
             <input
               className="input-in-form-module"
               {...register(`lastName_${index}`, { required: true })}
-              placeholder="Last Name"
+              placeholder="名字"
             />
             {errors[`lastName_${index}`] && (
               <p className="error-message">Last name is required.</p>
@@ -40,7 +40,7 @@ export default function FormModule({ onSubmitData }) {
             <input
               className="input-in-form-module"
               {...register(`age_${index}`, { pattern: /\d+/ })}
-              placeholder="Age"
+              placeholder="年龄"
             />
             {errors[`age_${index}`] && (
               <p className="error-message">Please enter a number for age.</p>
@@ -65,7 +65,7 @@ export default function FormModule({ onSubmitData }) {
             </button>
           )}
         </div>
-        <input type="submit" className="input-in-form-module" value="Submit" />
+        <input type="submit" className="input-in-form-module" value="提交" />
       </form>
     </div>
   );

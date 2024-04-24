@@ -46,6 +46,7 @@ function ExcelToJsonConverter({
     | FormattedExperimentData
     | null
   >(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [displayData, setDisplayData] = useState('');
   const [fileName, setFileName] = useState('');
   const [scale, setScale] = useState('');
@@ -229,7 +230,7 @@ function ExcelToJsonConverter({
       <button type="button" onClick={handleConvert} className="button">
         确定
       </button>
-      <pre className="json-data">{displayData}</pre>
+      {/* <pre className="json-data">{displayData}</pre> */}
     </div>
   );
 }

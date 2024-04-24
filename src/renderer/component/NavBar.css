@@ -1,10 +1,10 @@
 .navbar{
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
+  /*border-bottom-left-radius: 10px; !* 左下角圆角 *!*/
+  /*border-bottom-right-radius: 10px; !* 右下角圆角 *!*/
   margin-bottom: 10px;
   padding: 10px;
-
   position: fixed; /* 让导航栏固定在屏幕上 */
   top: 0; /* 距离屏幕顶部的距离 */
   left: 0; /* 距离屏幕左侧的距离 */

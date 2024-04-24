@@ -11,7 +11,9 @@ import separateList, {
   calibrateExperimentData,
   getAverageNoiseAnnoyanceForSamples,
 } from '../util/DataListHandler';
+import InfoDisplay from './InfoDisplay';
 
+let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 export default function ImportExcelPage() {
   const [dataList, setDataList] = React.useState<
     Array<
@@ -20,6 +22,8 @@ export default function ImportExcelPage() {
       | FormattedExperimentData
     >
   >([]);
+
+  const [hasData, setHasData] = React.useState(false);
 
   const handleReceivedData = (
     data:
@@ -43,6 +47,10 @@ export default function ImportExcelPage() {
         });
       }
     }
+
+    if (dataList.length === 2) {
+      setHasData(true);
+    }
   };
 
   useEffect(() => {
@@ -50,22 +58,29 @@ export default function ImportExcelPage() {
     const { acousticParameterTableData, experimentData } =
       separateList(dataList) ?? {};
     const dataAfterCalibrating = calibrateExperimentData(experimentData);
-    const sampleWithItsAveragedAnnoyance =
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sampleWithItsAveragedAnnoyance =
       getAverageNoiseAnnoyanceForSamples(dataAfterCalibrating);
   }, [dataList]);
 
   return (
-    <div className="select-excel-page">
+    <div>
       <TopNavbar />
-      <FileInputUtil
-        description="被试者数据"
-        dataObtained={handleReceivedData}
-      />
-      <FileInputUtil
-        description="声学参量表"
-        dataObtained={handleReceivedData}
-      />
-      {/* <InfoDisplay formData={JSON.stringify(receivedData)} /> */}
+      <div className="select-excel-page">
+        <div />
+        <FileInputUtil
+          description="被试者数据"
+          dataObtained={handleReceivedData}
+        />
+        <FileInputUtil
+          description="声学参量表"
+          dataObtained={handleReceivedData}
+        />
+        <InfoDisplay
+          data={hasData ? sampleWithItsAveragedAnnoyance : ''}
+          count={dataList.length}
+        />
+      </div>
     </div>
   );
 }
