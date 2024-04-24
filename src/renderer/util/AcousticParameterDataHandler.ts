@@ -3,7 +3,7 @@ import {
   AcousticParameterTableData,
   Sample,
 } from '../model/ExperimentDataModel';
-import { calculateLN } from './Algorithm';
+import { calculateLN, processN5AndNData } from './Algorithm';
 
 export default function handleAcousticParameterData(
   row: Excel.Row,
@@ -111,15 +111,30 @@ export function acousticParameterDataAfterMerging(
         sampleName: sampleInfo.sampleName,
         parametersInfo: sampleInfo.parametersInfo.map((paramInfo) => ({
           parameterName: paramInfo.parameterName,
-          singleParameterInfo: [
-            {
-              value:
-                paramInfo.singleParameterInfo.reduce(
-                  (acc, curr) => acc + curr.value,
-                  0,
-                ) / paramInfo.singleParameterInfo.length,
-            },
-          ],
+          singleParameterInfo:
+            paramInfo.parameterName === 'N5/sone' ||
+            paramInfo.parameterName === 'N/sone'
+              ? [
+                  {
+                    value: processN5AndNData(
+                      paramInfo.singleParameterInfo.find(
+                        (info) => info.channel === 'L',
+                      )?.value || 0,
+                      paramInfo.singleParameterInfo.find(
+                        (info) => info.channel === 'R',
+                      )?.value || 0,
+                    ),
+                  },
+                ]
+              : [
+                  {
+                    value:
+                      paramInfo.singleParameterInfo.reduce(
+                        (acc, curr) => acc + curr.value,
+                        0,
+                      ) / paramInfo.singleParameterInfo.length,
+                  },
+                ],
         })),
       })),
   };

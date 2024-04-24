@@ -29,7 +29,7 @@ table {
   border-radius: 8px; /* 圆角边框 */
   overflow: hidden; /* 防止边框溢出 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
-  color: #4e4d4d
+  color: #4e4d4d;
 }
 
 th, td {
@@ -79,5 +79,42 @@ tr:hover {
   animation: countChange 0.2s ease-in-out;
   display: inline-block;
 }
+
+.header-container {
+  position: relative;
+  height: 20px; /* 设置一个适当的高度 */
+}
+
+
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+}
+
+.export-button {
+  padding: 0px 5px;
+  position: absolute;
+  right: 20px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.5); /* 半透明白色背景 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 初始阴影效果 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* 添加过渡效果 */
+}
+
+.export-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 阴影变大效果 */
+  transform: translateY(-2px); /* 向上移动2px */
+  background-color: rgba(255, 255, 255, 0.6); /* 悬浮时略微增加透明度 */
+}
+
+.table-row-key {
+  font-weight: bold;
+}
+
 
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './InfoDisplay.css';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 interface Data {
   [key: string]: number; // 根据你的数据类型定义
@@ -11,6 +13,31 @@ function isData(data: any): data is Data {
     data !== null &&
     Object.values(data).every((value) => typeof value === 'number')
   );
+}
+
+function exportSampleWithAnnoyanceDataToExcel(sortedData: [string, number][]) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('样本数据');
+
+  // 设置表头
+  worksheet.columns = [
+    { header: '样本名称', key: 'name', width: 20 },
+    { header: '烦恼度', key: 'value', width: 15 },
+  ];
+
+  // 填充数据
+  sortedData.forEach(([key, value]) => {
+    worksheet.addRow({ name: key, value: value.toFixed(3) });
+  });
+
+  // 生成Excel文件
+  // eslint-disable-next-line promise/catch-or-return,promise/always-return
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, 'sample_with_annoyance.xlsx');
+  });
 }
 
 export default function InfoDisplay({
@@ -60,7 +87,34 @@ export default function InfoDisplay({
   return (
     <div className="info-display">
       <div className="data-container">
-        <h3>校准后样本平均烦恼度</h3>
+        <div className="header-container">
+          <h3 className="header-title">校准后样本平均烦恼度</h3>
+          <button
+            type="button"
+            onClick={() => exportSampleWithAnnoyanceDataToExcel(sortedData)}
+            className="export-button"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="icon icon-tabler icon-tabler-table-share"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="#6f32be"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 21h-7a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v8" />
+              <path d="M3 10h18" />
+              <path d="M10 3v18" />
+              <path d="M16 22l5 -5" />
+              <path d="M21 21.5v-4.5h-4.5" />
+            </svg>
+          </button>
+        </div>
         <table>
           <thead>
             <tr>
@@ -71,7 +125,7 @@ export default function InfoDisplay({
           <tbody>
             {sortedData.map(([key, value]) => (
               <tr key={key}>
-                <td>{key}</td>
+                <td className="table-row-key">{key}</td>
                 <td>{value.toFixed(3)}</td>
               </tr>
             ))}
