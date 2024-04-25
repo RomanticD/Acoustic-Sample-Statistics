@@ -1,0 +1,48 @@
+.function-plot {
+  fill: #333;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+}
+
+.function-plot .title {
+  font-weight: bold;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+}
+
+/* x轴样式 */
+.function-plot .x.axis .tick line {
+  stroke: #ccc; /* 线条颜色 */
+  stroke-width: 1px; /* 线条宽度 */
+}
+
+.function-plot .x.axis .tick text {
+  font-size: 10px; /* 字体大小 */
+  fill: #333; /* 字体颜色 */
+}
+
+.function-plot .x.axis path.domain {
+  stroke: #000; /* 边界线颜色 */
+  stroke-width: 1px; /* 边界线宽度 */
+}
+
+/* y轴样式 */
+.function-plot .y.axis .tick line {
+  stroke: #ccc; /* 线条颜色 */
+  stroke-width: 1px; /* 线条宽度 */
+}
+
+.function-plot .y.axis .tick text {
+  font-size: 10px; /* 字体大小 */
+  fill: #333; /* 字体颜色 */
+}
+
+.function-plot .y.axis path.domain {
+  stroke: #000; /* 边界线颜色 */
+  stroke-width: 1px; /* 边界线宽度 */
+}
+
+.function-plot .line {
+  stroke-width: 1.5px;
+}

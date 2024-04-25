@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import './DigitalScale.css';
 import { Question } from '../../model/QuestionModel';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function DigitalScale({ question }: { question: Question }) {
   const [selectedOption, setSelectedOption] = useState('');
 
-  console.log(selectedOption);
+  // console.log(selectedOption);
 
   const options = [
     { value: '0', label: '0' },
@@ -25,8 +26,8 @@ export default function DigitalScale({ question }: { question: Question }) {
     setSelectedOption(event.target.value);
   };
 
-  console.log(question);
-  console.log(selectedOption);
+  // console.log(question);
+  // console.log(selectedOption);
 
   return (
     <div className="digital-scale">

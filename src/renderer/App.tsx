@@ -63,7 +63,9 @@ function Root() {
           <WordScale question={eg} />
           <WordScale question={eg} />
           <DigitalScale question={eg} />
-          {formData && <InfoDisplay data={reformatDataToDisplay(formData)} />}
+          {formData && (
+            <InfoDisplay data={reformatDataToDisplay(formData)} count={1} />
+          )}
         </div>
       </div>
     </div>

@@ -5,7 +5,41 @@
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.3);
   padding: 40px;
-  border-radius: 10px;
   overflow-y: auto;
 }
 
+.graph-wrapper {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+  0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+  padding: 20px 50px;
+  margin-top: 20px;
+  overflow-y: auto;
+  column-span: all;
+  text-align: center;
+}
+
+.button-enable-zoom {
+  width: 80px;
+  z-index: 1;
+  position: absolute;
+  right: 60px;
+  margin-top: 5px;
+  font-size: 12px;
+  padding: 8px;
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加动画效果 */
+}
+
+.button-enable-zoom:hover {
+  background-color: #564dff;
+  transform: translateY(-2px) scale(1.02); /* 按钮向下移动10px */
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* 添加悬浮效果 */
+}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './WordScale.css';
 import { Question } from '../../model/QuestionModel';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function WordScale({ question }: { question: Question }) {
   const [selectedOption, setSelectedOption] = useState('');
 
@@ -17,8 +18,8 @@ export default function WordScale({ question }: { question: Question }) {
     setSelectedOption(event.target.value);
   };
 
-  console.log(question);
-  console.log(selectedOption);
+  // console.log(question);
+  // console.log(selectedOption);
 
   return (
     <div className="word-scale">
