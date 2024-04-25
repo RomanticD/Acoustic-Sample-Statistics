@@ -74,15 +74,23 @@ h1 {
 
 .right-panel {
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
   margin-left: 20px;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.right-panel::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }
 
 .left-panel {
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.left-panel::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }
 
 .icon-image {
