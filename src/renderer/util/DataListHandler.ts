@@ -254,3 +254,30 @@ export function getAverageNoiseAnnoyanceForSamples(
   console.log(resultMap);
   return resultMap;
 }
+
+export function getFunctionExpressions(
+  originalData: FormattedExperimentData | undefined,
+): { fn: string; participantId: number }[] {
+  if (!originalData || !originalData.evaluations) {
+    return [{ fn: '0 * x + 0', participantId: -Infinity }];
+  }
+
+  const expressionsData: { participantId: number; equation: number[] }[] = [];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const participantEvaluation of originalData.evaluations) {
+    const participant = participantEvaluation.participant.id;
+    const resultSet = getCurrentParticipantEvaluationsForPinkNoise(
+      participantEvaluation,
+    );
+    expressionsData.push({
+      participantId: participant,
+      equation: resultSet.equation,
+    });
+  }
+
+  return expressionsData.map(({ participantId, equation }) => ({
+    fn: `y = ${equation[0]} * x + ${equation[1]}`,
+    participantId,
+  }));
+}

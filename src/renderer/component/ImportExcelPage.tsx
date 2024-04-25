@@ -10,6 +10,7 @@ import {
 import separateList, {
   calibrateExperimentData,
   getAverageNoiseAnnoyanceForSamples,
+  getFunctionExpressions,
 } from '../util/DataListHandler';
 import InfoDisplay from './InfoDisplay';
 import { acousticParameterDataAfterMerging } from '../util/AcousticParameterDataHandler';
@@ -21,14 +22,23 @@ import {
 } from '../util/Algorithm';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
+let everyParticipantFitFunctionExpression: {
+  fn: string;
+  participantId: number;
+}[] = [];
 
 export default function ImportExcelPage() {
   const [hasData, setHasData] = React.useState(false);
   const [disableZoom, setDisableZoom] = useState(false);
-  const [an, setA] = useState(1);
-  const [bn, setB] = useState(2);
+  const [an_acousticParameter, setA_acousticParameter] = useState(0);
+  const [bn_acousticParameter, setB_acousticParameter] = useState(0);
+  const [experimentFunctionExpression, setExperimentFunctionExpression] =
+    useState('y = 0 * x + 0');
   const [points, setPoints] = React.useState<Point[]>([]);
-  const [functionExpression, setFunctionExpression] = useState('');
+  const [
+    acousticParameterFunctionExpression,
+    setAcousticParameterFunctionExpression,
+  ] = useState('');
   const [dataList, setDataList] = React.useState<
     Array<
       | AcousticParameterTableData
@@ -84,28 +94,36 @@ export default function ImportExcelPage() {
       acousticParameterTableData,
     );
     console.log(mergedAcousticParameterData);
+    console.log(getFunctionExpressions(dataAfterCalibrating));
+
+    everyParticipantFitFunctionExpression =
+      getFunctionExpressions(dataAfterCalibrating);
+
+    setExperimentFunctionExpression(
+      getFunctionExpressions(dataAfterCalibrating)[0].fn,
+    );
+    console.log(experimentFunctionExpression);
 
     const dataPoints: Point[] = [
       [1, 2],
       [2, 3],
       [3, 5],
-      [8, 9],
-      [7, 6],
-      [12, 89],
-      // ... 更多数据点
+      [4, 7],
+      [5, 7.5],
+      [9, 8],
     ];
 
     const [a, b] = logisticFit(dataPoints, 1000, 0.01);
 
     setPoints(dataPoints);
-    setFunctionExpression(generateLogisticExpression(a, b));
-    setA(a);
-    setB(b);
+    setAcousticParameterFunctionExpression(generateLogisticExpression(a, b));
+    setA_acousticParameter(a);
+    setB_acousticParameter(b);
   }, [dataList]);
 
-  const data = [
+  const acousticParameter = [
     {
-      fn: `y = 10 / (1 + exp(-(${an} * x + ${bn})))`,
+      fn: `y = 10 / (1 + exp(-(${an_acousticParameter} * x + ${bn_acousticParameter})))`,
     },
     {
       points,
@@ -114,9 +132,9 @@ export default function ImportExcelPage() {
     },
   ];
 
-  const options = {
-    target: '#graph-wrapper',
-    title: `感知烦恼度预测模型 ${functionExpression}`,
+  const acousticParameterOptions = {
+    target: '#acoustic-parameter-graph-wrapper',
+    title: `${acousticParameterFunctionExpression}`,
     yAxis: {
       label: 'Am',
       domain: [-1, 14],
@@ -127,6 +145,26 @@ export default function ImportExcelPage() {
     grid: false,
     disableZoom,
   };
+
+  // const options = {
+  //   target: '#experiment-fit-graph-wrapper',
+  //   title: `拟合数据`,
+  //   yAxis: {
+  //     label: 'Y',
+  //     domain: [-10, 14],
+  //   },
+  //   xAxis: {
+  //     label: 'X',
+  //   },
+  //   grid: false,
+  //   disableZoom,
+  // };
+  //
+  // const data = [
+  //   {
+  //     fn: `${experimentFunctionExpression}`,
+  //   },
+  // ];
 
   return (
     <div>
@@ -145,15 +183,32 @@ export default function ImportExcelPage() {
           data={hasData ? sampleWithItsAveragedAnnoyance : ''}
           count={dataList.length}
         />
-        <div id="graph-wrapper" className="graph-wrapper">
-          <button
-            type="button"
-            onClick={enableZoom}
-            className="button-enable-zoom"
-          >
-            {disableZoom ? '解锁图像' : '锁定图像'}
-          </button>
-          <Graph data={data} options={options} />
+        <InfoDisplay
+          data={hasData ? everyParticipantFitFunctionExpression : ''}
+          count={dataList.length}
+        />
+        <div className="graph-and-label-wrapper">
+          <div className="label-and-button">
+            <h3 className="title-label">感知烦恼度预测模型</h3>
+            <button
+              type="button"
+              onClick={enableZoom}
+              className="button-enable-zoom"
+            >
+              {disableZoom ? '解锁图像' : '恢复默认'}
+            </button>
+          </div>
+          <div id="acoustic-parameter-graph-wrapper" className="graph-wrapper">
+            <Graph
+              data={acousticParameter}
+              options={acousticParameterOptions}
+            />
+          </div>
+          {/* {hasData && ( */}
+          {/*  <div id="experiment-fit-graph-wrapper" className="graph-wrapper"> */}
+          {/*    <Graph data={data} options={options} /> */}
+          {/*  </div> */}
+          {/* )} */}
         </div>
       </div>
     </div>

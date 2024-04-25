@@ -3,7 +3,7 @@ import {
   AcousticParameterTableData,
   Sample,
 } from '../model/ExperimentDataModel';
-import { calculateLN, processN5AndNData } from './Algorithm';
+import { calculateLN, Point, processN5AndNData } from './Algorithm';
 
 export default function handleAcousticParameterData(
   row: Excel.Row,
@@ -138,4 +138,21 @@ export function acousticParameterDataAfterMerging(
         })),
       })),
   };
+}
+
+export function getDataPoints(
+  acousticParameterData: AcousticParameterTableData | undefined,
+): Point[] {
+  if (!acousticParameterData) return [];
+
+  const points: Point[] = [];
+  const sampleName: string = '';
+
+  acousticParameterData.allSamplesWithAcousticalParameterInfo[0].parametersInfo.forEach(
+    (nameAndValue) => {
+      const L = nameAndValue.singleParameterInfo[0];
+    },
+  );
+
+  return points;
 }
