@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+// @ts-ignore
+import Latex from 'react-latex';
 import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
 import TopNavbar from './NavBar';
@@ -13,13 +15,12 @@ import separateList, {
   getFunctionExpressions,
 } from '../util/DataListHandler';
 import InfoDisplay from './InfoDisplay';
-import { acousticParameterDataAfterMerging } from '../util/AcousticParameterDataHandler';
-import Graph from './FunctionPlot';
 import {
-  generateLogisticExpression,
-  logisticFit,
-  Point,
-} from '../util/Algorithm';
+  acousticParameterDataAfterMerging,
+  getDataPointsForAllAcousticParameters,
+} from '../util/AcousticParameterDataHandler';
+import Graph from './FunctionPlot';
+import { logisticFit, Point } from '../util/Algorithm';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 let everyParticipantFitFunctionExpression: {
@@ -34,13 +35,10 @@ export default function ImportExcelPage() {
   const [an_acousticParameter, setA_acousticParameter] = useState(0);
   // eslint-disable-next-line camelcase
   const [bn_acousticParameter, setB_acousticParameter] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [experimentFunctionExpression, setExperimentFunctionExpression] =
-    useState('y = 0 * x + 0');
+    useState<string[]>([]);
   const [points, setPoints] = React.useState<Point[]>([]);
-  const [
-    acousticParameterFunctionExpression,
-    setAcousticParameterFunctionExpression,
-  ] = useState('');
   const [dataList, setDataList] = React.useState<
     Array<
       | AcousticParameterTableData
@@ -62,7 +60,9 @@ export default function ImportExcelPage() {
   ) => {
     if (data) {
       // 检查数据是否已存在于 dataList
-      const dataExists = dataList.some((item) => item === data);
+      const dataExists = dataList.some(
+        (item) => item.experiment.scale === data.experiment.scale,
+      );
 
       // 如果数据不存在于 dataList，则将其添加到 dataList
       if (!dataExists) {
@@ -101,32 +101,33 @@ export default function ImportExcelPage() {
     everyParticipantFitFunctionExpression =
       getFunctionExpressions(dataAfterCalibrating);
 
-    setExperimentFunctionExpression(
-      getFunctionExpressions(dataAfterCalibrating)[0].fn,
+    const paraAndPointsArr = getDataPointsForAllAcousticParameters(
+      sampleWithItsAveragedAnnoyance,
+      mergedAcousticParameterData,
     );
-    console.log(experimentFunctionExpression);
 
-    const dataPoints: Point[] = [
-      [1, 2],
-      [2, 3],
-      [3, 5],
-      [4, 7],
-      [5, 7.5],
-      [9, 8],
-    ];
+    let dataPoints: Point[] = [[0, 1]];
+
+    if (paraAndPointsArr.length !== 0) {
+      dataPoints = paraAndPointsArr[0].points;
+      setPoints(dataPoints);
+    }
+
+    // const dataPoints: Point[] = paraAndPointsArr[0].points;
 
     const [a, b] = logisticFit(dataPoints, 1000, 0.01);
+    console.log(a);
+    console.log(b);
 
     setPoints(dataPoints);
-    setAcousticParameterFunctionExpression(generateLogisticExpression(a, b));
     setA_acousticParameter(a);
     setB_acousticParameter(b);
-  }, [dataList, experimentFunctionExpression]);
+  }, [dataList]);
 
   const acousticParameter = [
     {
       // eslint-disable-next-line camelcase
-      fn: `y = 10 / (1 + exp(-(${an_acousticParameter} * x + ${bn_acousticParameter})))`,
+      fn: `y = 10 / (1 + exp(-(${an_acousticParameter} * ( x - 0 ) + ${bn_acousticParameter})))`,
     },
     {
       points,
@@ -137,7 +138,6 @@ export default function ImportExcelPage() {
 
   const acousticParameterOptions = {
     target: '#acoustic-parameter-graph-wrapper',
-    title: `${acousticParameterFunctionExpression}`,
     yAxis: {
       label: 'Am',
       domain: [-1, 14],
@@ -145,7 +145,7 @@ export default function ImportExcelPage() {
     xAxis: {
       label: 'L',
     },
-    grid: false,
+    grid: true,
     disableZoom,
   };
 
@@ -192,29 +192,56 @@ export default function ImportExcelPage() {
             count={dataList.length}
           />
         )}
-        <div className="graph-and-label-wrapper">
-          <div className="label-and-button">
-            <h3 className="title-label">感知烦恼度预测模型</h3>
-            <button
-              type="button"
-              onClick={enableZoom}
-              className="button-enable-zoom"
+        {hasDataCollected && (
+          <div className="graph-and-label-wrapper">
+            <div className="label-and-button">
+              <div className="div-for-label">
+                <h3 className="title-label">感知烦恼度预测模型</h3>
+                <div className="Latex-expression">
+                  {/* eslint-disable-next-line camelcase */}
+                  <Latex>
+                    {/* eslint-disable-next-line camelcase */}
+                    {bn_acousticParameter < 0
+                      ? // eslint-disable-next-line camelcase
+                        `$y = \\frac{10}{1 + e^{- (${an_acousticParameter.toFixed(
+                          3,
+                          // eslint-disable-next-line camelcase
+                        )}x - ${Math.abs(
+                          // eslint-disable-next-line camelcase
+                          Number(bn_acousticParameter.toFixed(3)),
+                        )})}}$`
+                      : // eslint-disable-next-line camelcase
+                        `$y = \\frac{10}{1 + e^{- (${an_acousticParameter.toFixed(
+                          3,
+                          // eslint-disable-next-line camelcase
+                        )}x + ${bn_acousticParameter.toFixed(3)})}}$`}
+                  </Latex>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={enableZoom}
+                className="button-enable-zoom"
+              >
+                {disableZoom ? '解锁图像' : '恢复默认'}
+              </button>
+            </div>
+            <div
+              id="acoustic-parameter-graph-wrapper"
+              className="graph-wrapper"
             >
-              {disableZoom ? '解锁图像' : '恢复默认'}
-            </button>
+              <Graph
+                data={acousticParameter}
+                options={acousticParameterOptions}
+              />
+            </div>
+            {/* {hasDataCollected && ( */}
+            {/*  <div id="experiment-fit-graph-wrapper" className="graph-wrapper"> */}
+            {/*    <Graph data={data} options={options} /> */}
+            {/*  </div> */}
+            {/* )} */}
           </div>
-          <div id="acoustic-parameter-graph-wrapper" className="graph-wrapper">
-            <Graph
-              data={acousticParameter}
-              options={acousticParameterOptions}
-            />
-          </div>
-          {/* {hasDataCollected && ( */}
-          {/*  <div id="experiment-fit-graph-wrapper" className="graph-wrapper"> */}
-          {/*    <Graph data={data} options={options} /> */}
-          {/*  </div> */}
-          {/* )} */}
-        </div>
+        )}
       </div>
     </div>
   );

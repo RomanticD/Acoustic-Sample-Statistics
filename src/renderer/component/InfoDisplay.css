@@ -58,11 +58,16 @@ tr:hover {
 }
 
 .number-of-selection-message {
+  margin-top: 20vh;
+  justify-content: center;
   color: #535353;
   font-size: 4rem;
+  height: 60vh;
+  align-items: center;
 }
 
 .none-data-div {
+
 }
 
 @keyframes countChange {

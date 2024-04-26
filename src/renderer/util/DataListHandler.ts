@@ -23,6 +23,8 @@ export default function separateList(
   let experimentData: FormattedExperimentData | undefined;
 
   dataList.forEach((item) => {
+    console.log(dataList);
+
     if (item.experiment.scale === 'acoustic parameter') {
       acousticParameterTableData = <AcousticParameterTableData>item;
     } else if (

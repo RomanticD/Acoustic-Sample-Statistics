@@ -140,19 +140,53 @@ export function acousticParameterDataAfterMerging(
   };
 }
 
-export function getDataPoints(
+export type ParameterWithPoints = {
+  parameterName: string;
+  points: Point[];
+};
+
+export function getDataPointsForAllAcousticParameters(
+  sampleWithItsAveragedAnnoyance: { [sampleName: string]: number },
   acousticParameterData: AcousticParameterTableData | undefined,
-): Point[] {
-  if (!acousticParameterData) return [];
+): ParameterWithPoints[] {
+  if (!acousticParameterData || !acousticParameterData) return [];
 
-  const points: Point[] = [];
-  const sampleName: string = '';
+  const allParametersName =
+    acousticParameterData.allSamplesWithAcousticalParameterInfo[0].parametersInfo.map(
+      (item) => {
+        return item.parameterName;
+      },
+    );
 
-  acousticParameterData.allSamplesWithAcousticalParameterInfo[0].parametersInfo.forEach(
-    (nameAndValue) => {
-      const L = nameAndValue.singleParameterInfo[0];
-    },
-  );
+  const annoyanceArray: number[] = Object.keys(
+    sampleWithItsAveragedAnnoyance,
+  ).map((key) => sampleWithItsAveragedAnnoyance[key]);
 
-  return points;
+  const result: ParameterWithPoints[] = [];
+
+  allParametersName.forEach((parameterName) => {
+    const points: Point[] = [];
+
+    acousticParameterData.allSamplesWithAcousticalParameterInfo.forEach(
+      (sampleWithAllParameters, index) => {
+        const y: number = annoyanceArray[index];
+
+        sampleWithAllParameters.parametersInfo.forEach((para) => {
+          if (para.parameterName === parameterName) {
+            const x = para.singleParameterInfo[0].value;
+            points.push([x, y]);
+          }
+        });
+      },
+    );
+
+    const dataSet = {
+      parameterName,
+      points,
+    };
+
+    result.push(dataSet);
+  });
+  console.log(result);
+  return result;
 }
