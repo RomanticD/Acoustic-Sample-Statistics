@@ -28,9 +28,11 @@ let everyParticipantFitFunctionExpression: {
 }[] = [];
 
 export default function ImportExcelPage() {
-  const [hasData, setHasData] = React.useState(false);
+  const [hasDataCollected, setHasDataCollected] = React.useState(false);
   const [disableZoom, setDisableZoom] = useState(false);
+  // eslint-disable-next-line camelcase
   const [an_acousticParameter, setA_acousticParameter] = useState(0);
+  // eslint-disable-next-line camelcase
   const [bn_acousticParameter, setB_acousticParameter] = useState(0);
   const [experimentFunctionExpression, setExperimentFunctionExpression] =
     useState('y = 0 * x + 0');
@@ -75,7 +77,7 @@ export default function ImportExcelPage() {
     }
 
     if (dataList.length === 2) {
-      setHasData(true);
+      setHasDataCollected(true);
     }
   };
 
@@ -119,10 +121,11 @@ export default function ImportExcelPage() {
     setAcousticParameterFunctionExpression(generateLogisticExpression(a, b));
     setA_acousticParameter(a);
     setB_acousticParameter(b);
-  }, [dataList]);
+  }, [dataList, experimentFunctionExpression]);
 
   const acousticParameter = [
     {
+      // eslint-disable-next-line camelcase
       fn: `y = 10 / (1 + exp(-(${an_acousticParameter} * x + ${bn_acousticParameter})))`,
     },
     {
@@ -180,13 +183,15 @@ export default function ImportExcelPage() {
           dataObtained={handleReceivedData}
         />
         <InfoDisplay
-          data={hasData ? sampleWithItsAveragedAnnoyance : ''}
+          data={hasDataCollected ? sampleWithItsAveragedAnnoyance : ''}
           count={dataList.length}
         />
-        <InfoDisplay
-          data={hasData ? everyParticipantFitFunctionExpression : ''}
-          count={dataList.length}
-        />
+        {hasDataCollected && (
+          <InfoDisplay
+            data={hasDataCollected ? everyParticipantFitFunctionExpression : ''}
+            count={dataList.length}
+          />
+        )}
         <div className="graph-and-label-wrapper">
           <div className="label-and-button">
             <h3 className="title-label">感知烦恼度预测模型</h3>
@@ -204,7 +209,7 @@ export default function ImportExcelPage() {
               options={acousticParameterOptions}
             />
           </div>
-          {/* {hasData && ( */}
+          {/* {hasDataCollected && ( */}
           {/*  <div id="experiment-fit-graph-wrapper" className="graph-wrapper"> */}
           {/*    <Graph data={data} options={options} /> */}
           {/*  </div> */}

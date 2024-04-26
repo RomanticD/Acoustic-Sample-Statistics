@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './InfoDisplay.css';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import LatexComponent from './KaTeX';
 
 interface SAData {
   [key: string]: number;
@@ -48,6 +49,7 @@ function exportToExcel(
     worksheet.addRow(item);
   });
 
+  // eslint-disable-next-line promise/catch-or-return,promise/always-return
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -187,7 +189,10 @@ export default function InfoDisplay({
                 getSortedPFData().map((item) => (
                   <tr key={item.participantId}>
                     <td className="table-row-key">{item.participantId}</td>
-                    <td>{item.fn}</td>
+                    {/* <td>{item.fn}</td> */}
+                    <td>
+                      <LatexComponent equation={item.fn} />
+                    </td>
                   </tr>
                 ))}
           </tbody>
