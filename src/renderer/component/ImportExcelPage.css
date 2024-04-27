@@ -15,9 +15,6 @@
 }
 
 .button-enable-zoom {
-  position: absolute;
-  right: 50px;
-  margin-top: 20px;
   width: 80px;
   z-index: 1;
   font-size: 12px;
@@ -74,5 +71,62 @@
   justify-content: center; /* 垂直居中对齐 */
   text-align: center; /* 文字水平居中对齐 */
 }
+
+.button-group-graph {
+  position: absolute;
+  right: 50px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-parameter-name {
+  font-size: 13px;
+  margin-top: 20px;
+  width: 80px;
+  padding: 5px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  color: #333;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select-parameter-name:focus {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.select-parameter-name option:first-child {
+  color: #aaa;
+}
+
+.select-parameter-name option {
+  color: #333;
+}
+
+.select-parameter-name option:checked {
+  font-weight: bold;
+}
+
+.select-parameter-name::-webkit-input-placeholder {
+  color: #aaa;
+}
+
+.select-parameter-name::-moz-placeholder {
+  color: #aaa;
+}
+
+.select-parameter-name:-ms-input-placeholder {
+  color: #aaa;
+}
+
+.select-parameter-name::placeholder {
+  color: #aaa;
+}
+
+
 
 
