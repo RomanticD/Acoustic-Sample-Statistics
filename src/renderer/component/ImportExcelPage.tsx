@@ -21,6 +21,7 @@ import {
 } from '../util/AcousticParameterDataHandler';
 import Graph from './FunctionPlot';
 import { logisticFit, Point } from '../util/Algorithm';
+import { calculateRange } from '../util/Mapper';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 let everyParticipantFitFunctionExpression: {
@@ -124,7 +125,6 @@ export default function ImportExcelPage() {
     let dataPoints: Point[] = [[0, 1]];
 
     if (paraAndPointsArr.length !== 0) {
-      // TODO : choose the specific parameter and show the graph
       dataPoints = paraAndPointsArr[selectedIndex].points;
       setPoints(dataPoints);
     }
@@ -158,10 +158,11 @@ export default function ImportExcelPage() {
     target: '#acoustic-parameter-graph-wrapper',
     yAxis: {
       label: 'Am',
-      domain: [-1, 14],
+      domain: calculateRange(points).yRange,
     },
     xAxis: {
-      label: 'L',
+      label: selectedValue,
+      domain: calculateRange(points).xRange,
     },
     grid: true,
     disableZoom,

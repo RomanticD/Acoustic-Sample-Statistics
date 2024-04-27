@@ -1,4 +1,5 @@
 import { ExperimentData, Sample } from '../model/ExperimentDataModel';
+import { Point } from './Algorithm';
 
 /**
  * 根据文件名获取相应的音频标度。
@@ -67,4 +68,36 @@ export function getSampleByName(
   return experimentData.experiment.samples.find(
     (sample) => sample.name === sampleName,
   );
+}
+
+export function calculateRange(points: Point[]): {
+  xRange: [number, number];
+  yRange: [number, number];
+} {
+  if (points.length === 0) {
+    return { xRange: [0, 0], yRange: [0, 0] };
+  }
+
+  let minX = points[0][0];
+  let maxX = points[0][0];
+  let minY = points[0][1];
+  let maxY = points[0][1];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [x, y] of points) {
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    minY = Math.min(minY, y);
+    maxY = Math.max(maxY, y);
+  }
+
+  const marginPercentage = 0.6;
+
+  const xMargin = ((maxX - minX) * marginPercentage) / 2;
+  const yMargin = ((maxY - minY) * marginPercentage) / 2;
+
+  return {
+    xRange: [minX - xMargin, maxX + xMargin],
+    yRange: [minY - yMargin, maxY + yMargin],
+  };
 }
