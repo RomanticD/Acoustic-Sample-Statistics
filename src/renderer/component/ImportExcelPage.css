@@ -6,6 +6,7 @@
   background-color: rgba(255, 255, 255, 0.3);
   padding: 40px;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .graph-wrapper {
