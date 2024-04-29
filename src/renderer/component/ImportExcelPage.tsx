@@ -22,6 +22,8 @@ import {
 import Graph from './FunctionPlot';
 import { logisticFit, Point } from '../util/Algorithm';
 import { calculateRange } from '../util/Mapper';
+import jsonDataSample from '../util/ExportDataSample.json';
+import exportExperimentDataToExcel from '../util/ExportExperimentData';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 let everyParticipantFitFunctionExpression: {
@@ -171,6 +173,13 @@ export default function ImportExcelPage() {
   return (
     <div>
       <TopNavbar />
+      <button
+        type="button"
+        // @ts-ignore
+        onClick={() => exportExperimentDataToExcel(jsonDataSample)}
+      >
+        Export
+      </button>
       <div className="select-excel-page">
         <div />
         <FileInputUtil
