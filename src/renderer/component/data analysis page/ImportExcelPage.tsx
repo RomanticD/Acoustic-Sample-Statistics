@@ -3,27 +3,26 @@ import React, { useEffect, useState } from 'react';
 import Latex from 'react-latex';
 import FileInputUtil from './FileInputUtil';
 import './ImportExcelPage.css';
-import TopNavbar from './NavBar';
+import TopNavbar from '../others/NavBar';
 import {
   AcousticParameterTableData,
   FormattedExperimentData,
   FormattedNoiseSensitivityScaleData,
-} from '../model/ExperimentDataModel';
+} from '../../model/ExperimentDataModel';
 import separateList, {
   calibrateExperimentData,
   getAverageNoiseAnnoyanceForSamples,
   getFunctionExpressions,
-} from '../util/DataListHandler';
-import InfoDisplay from './InfoDisplay';
+} from '../../util/DataListHandler';
+import InfoDisplay from './mathematical chart/InfoDisplay';
 import {
   acousticParameterDataAfterMerging,
   getDataPointsForAllAcousticParameters,
-} from '../util/AcousticParameterDataHandler';
-import Graph from './FunctionPlot';
-import { logisticFit, Point } from '../util/Algorithm';
-import { calculateRange } from '../util/Mapper';
-import jsonDataSample from '../util/ExportDataSample.json';
-import exportExperimentDataToExcel from '../util/ExportExperimentData';
+} from '../../util/AcousticParameterDataHandler';
+import Graph from './mathematical chart/FunctionPlot';
+import { logisticFit, Point } from '../../util/Algorithm';
+import { calculateRange } from '../../util/Mapper';
+import ExportCalibratedDataButton from '../others/ExportExperimentDataButton';
 
 let sampleWithItsAveragedAnnoyance: { [sampleName: string]: number } = {};
 let everyParticipantFitFunctionExpression: {
@@ -31,6 +30,7 @@ let everyParticipantFitFunctionExpression: {
   participantId: number;
 }[] = [];
 let mergedAcousticParameterData: AcousticParameterTableData | undefined;
+let experimentDataToExport: FormattedExperimentData | undefined;
 
 export default function ImportExcelPage() {
   const [hasDataCollected, setHasDataCollected] = React.useState(false);
@@ -45,6 +45,8 @@ export default function ImportExcelPage() {
   const [experimentFunctionExpression, setExperimentFunctionExpression] =
     useState<string[]>([]);
   const [points, setPoints] = React.useState<Point[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedValue, setSelectedValue] = useState('');
   const [dataList, setDataList] = React.useState<
     Array<
       | AcousticParameterTableData
@@ -52,10 +54,8 @@ export default function ImportExcelPage() {
       | FormattedExperimentData
     >
   >([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedValue, setSelectedValue] = useState('');
 
-  // 处理选择框变化时的函数
+  // 处理下拉选择框变化
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     // 将所选的值转换为数字
     const index = event.target.selectedIndex;
@@ -65,6 +65,7 @@ export default function ImportExcelPage() {
     setSelectedValue(value);
   };
 
+  // Function Plot 能否自由移动
   function enableZoom() {
     setDisableZoom(!disableZoom);
   }
@@ -106,6 +107,7 @@ export default function ImportExcelPage() {
       separateList(dataList) ?? {};
 
     const dataAfterCalibrating = calibrateExperimentData(experimentData);
+    experimentDataToExport = dataAfterCalibrating;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     sampleWithItsAveragedAnnoyance =
       getAverageNoiseAnnoyanceForSamples(dataAfterCalibrating);
@@ -148,6 +150,7 @@ export default function ImportExcelPage() {
         cn_acousticParameter,
         // eslint-disable-next-line camelcase
       )} ) + ${bn_acousticParameter})))`,
+      // skipTip: true,
     },
     {
       points,
@@ -173,23 +176,22 @@ export default function ImportExcelPage() {
   return (
     <div>
       <TopNavbar />
-      <button
-        type="button"
-        // @ts-ignore
-        onClick={() => exportExperimentDataToExcel(jsonDataSample)}
-      >
-        Export
-      </button>
       <div className="select-excel-page">
-        <div />
-        <FileInputUtil
-          description="被试者数据"
-          dataObtained={handleReceivedData}
-        />
-        <FileInputUtil
-          description="声学参量表"
-          dataObtained={handleReceivedData}
-        />
+        {!hasDataCollected && (
+          <div className="file-choose-groups">
+            <FileInputUtil
+              description="被试者数据"
+              dataObtained={handleReceivedData}
+            />
+            <FileInputUtil
+              description="声学参量表"
+              dataObtained={handleReceivedData}
+            />
+          </div>
+        )}
+        {hasDataCollected && (
+          <ExportCalibratedDataButton dataToExport={experimentDataToExport} />
+        )}
         <InfoDisplay
           data={hasDataCollected ? sampleWithItsAveragedAnnoyance : ''}
           count={dataList.length}

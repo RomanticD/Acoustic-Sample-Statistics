@@ -8,8 +8,12 @@ function Graph(props) {
 
   useEffect(() => {
     functionPlot({
+      tip: {
+        xLine: true, // dashed line parallel to y = 0
+        yLine: true, // dashed line parallel to x = 0
+      },
       target: graphRef.current,
-      width: 620,
+      width: 800,
       height: 500,
       // eslint-disable-next-line react/destructuring-assignment,react/prop-types
       data: props.data,

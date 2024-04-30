@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './InfoDisplay.css';
 import LatexComponent from './KaTeX';
-import { exportToExcel } from '../util/ExportExperimentData';
+import { exportToExcel } from '../../../util/ExportExperimentData';
 
 interface SAData {
   [key: string]: number;

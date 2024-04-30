@@ -7,7 +7,7 @@ import {
   FormattedExperimentData,
   FormattedNoiseSensitivityScaleData,
   NoiseSensitivityScaleData,
-} from '../model/ExperimentDataModel';
+} from '../../model/ExperimentDataModel';
 import {
   handleDigitalAndNumberScaleDataToJson,
   handleSampleNames,
@@ -15,16 +15,16 @@ import {
   getExperimentData,
   getFormattedExperimentData,
   filterInvalidExperimentData,
-} from '../util/WordAndDigitalScaleDataHandler';
-import getScale from '../util/Mapper';
+} from '../../util/WordAndDigitalScaleDataHandler';
+import getScale from '../../util/Mapper';
 import {
   getFormattedNoiseSensitivityScaleData,
   getNoiseSensitivityScaleData,
   handleNoiseSensitivityScaleData,
-} from '../util/NoiseSensitivityScaleDataHandler';
+} from '../../util/NoiseSensitivityScaleDataHandler';
 import handleAcousticParameterData, {
   getFormattedAcousticParameterData,
-} from '../util/AcousticParameterDataHandler';
+} from '../../util/AcousticParameterDataHandler';
 
 function ExcelToJsonConverter({
   description,

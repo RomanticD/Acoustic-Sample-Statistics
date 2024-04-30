@@ -2,14 +2,14 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import icon from '../../assets/icon.svg';
 import './App.css';
-import FormModule from './component/FormModule';
-import InfoDisplay from './component/InfoDisplay';
+import FormModule from './component/main page/FormModule';
+import InfoDisplay from './component/data analysis page/mathematical chart/InfoDisplay';
 import { reformatDataToDisplay } from './util/DisplayUtil';
-import WordScale from './component/scale/WordScale';
+import WordScale from './component/main page/WordScale';
 import { Question } from './model/QuestionModel';
-import DigitalScale from './component/scale/DigitalScale';
-import ImportExcelPage from './component/ImportExcelPage';
-import TopNavBar from './component/NavBar';
+import DigitalScale from './component/main page/DigitalScale';
+import ImportExcelPage from './component/data analysis page/ImportExcelPage';
+import TopNavBar from './component/others/NavBar';
 
 const eg: Question = {
   sampleId: 1,

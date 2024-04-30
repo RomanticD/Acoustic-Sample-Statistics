@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import './FormModule.css';
-import { removeFormDataThatNotShown } from '../util/DisplayUtil';
+import { removeFormDataThatNotShown } from '../../util/DisplayUtil';
 
 // @ts-ignore
 // eslint-disable-next-line react/prop-types

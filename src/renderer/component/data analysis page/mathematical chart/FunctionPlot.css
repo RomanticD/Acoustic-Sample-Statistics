@@ -6,6 +6,13 @@
   scroll-behavior: smooth;
 }
 
+.zoom-and-drag {
+  margin-top: 0;
+}
+
+.top-right-legend {
+  display: none;
+}
 .function-plot .title {
   font-weight: bold;
   font-size: 15px;

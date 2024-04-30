@@ -10,11 +10,11 @@ import {
 import getLinearRegressionResult from './Algorithm';
 
 /**
- * Separates items in the provided dataList into two categories based on the scale of the experiment.
+ * Separates items in the provided dataList into two categories based on the main page of the experiment.
  * @param dataList An array containing items of types AcousticParameterTableData, FormattedNoiseSensitivityScaleData, or FormattedExperimentData.
  * @returns An object containing two properties:
- *  - acousticParameterTableData: The item with scale 'acoustic parameter' if found, otherwise undefined.
- *  - experimentData: The item with scale 'digital' or 'word' if found, otherwise undefined.
+ *  - acousticParameterTableData: The item with main page 'acoustic parameter' if found, otherwise undefined.
+ *  - experimentData: The item with main page 'digital' or 'word' if found, otherwise undefined.
  */
 export default function separateList(
   dataList: Array<
