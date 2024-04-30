@@ -5,6 +5,13 @@ import {
 } from '../model/ExperimentDataModel';
 import { calculateLN, Point, processN5AndNData } from './Algorithm';
 
+/**
+ * Handles acoustic parameter data from an Excel row and organizes it into an array of objects.
+ * @param row The Excel row containing the acoustic parameter data.
+ * @param sampleWithParametersInfo An array to store sample information with their parameters.
+ * @param sampleNamesArr An array containing sample names.
+ * @returns An updated array containing sample information with their parameters.
+ */
 export default function handleAcousticParameterData(
   row: Excel.Row,
   sampleWithParametersInfo: any[],
@@ -81,6 +88,11 @@ export default function handleAcousticParameterData(
   return sampleWithParametersInfo;
 }
 
+/**
+ * Formats the provided acoustic parameter data into AcousticParameterTableData structure.
+ * @param originData The original acoustic parameter data.
+ * @returns Formatted acoustic parameter data in AcousticParameterTableData structure.
+ */
 export function getFormattedAcousticParameterData(
   originData: any[],
 ): AcousticParameterTableData {
@@ -96,6 +108,11 @@ export function getFormattedAcousticParameterData(
   };
 }
 
+/**
+ * Merges and processes acoustic parameter data into a unified structure.
+ * @param originData The original acoustic parameter data.
+ * @returns Merged and processed acoustic parameter data.
+ */
 export function acousticParameterDataAfterMerging(
   originData: AcousticParameterTableData | undefined,
 ): AcousticParameterTableData | undefined {
@@ -140,11 +157,20 @@ export function acousticParameterDataAfterMerging(
   };
 }
 
+/**
+ * Represents a parameter with its associated data points.
+ */
 export type ParameterWithPoints = {
   parameterName: string;
   points: Point[];
 };
 
+/**
+ * Retrieves data points for all acoustic parameters based on averaged annoyance values.
+ * @param sampleWithItsAveragedAnnoyance An object containing sample names as keys and their averaged annoyance values as values.
+ * @param acousticParameterData The acoustic parameter data containing information about samples and their parameters.
+ * @returns An array of ParameterWithPoints objects containing data points for each acoustic parameter.
+ */
 export function getDataPointsForAllAcousticParameters(
   sampleWithItsAveragedAnnoyance: { [sampleName: string]: number },
   acousticParameterData: AcousticParameterTableData | undefined,

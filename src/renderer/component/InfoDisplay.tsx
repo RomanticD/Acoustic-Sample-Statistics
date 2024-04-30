@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './InfoDisplay.css';
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import LatexComponent from './KaTeX';
+import { exportToExcel } from '../util/ExportExperimentData';
 
 interface SAData {
   [key: string]: number;
@@ -32,30 +31,6 @@ function isPFData(data: any): data is PFData[] {
         typeof item.participantId === 'number',
     )
   );
-}
-
-function exportToExcel(
-  worksheetName: string,
-  columns: any[],
-  data: any[],
-  filename: string,
-) {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(worksheetName);
-
-  worksheet.columns = columns;
-
-  data.forEach((item) => {
-    worksheet.addRow(item);
-  });
-
-  // eslint-disable-next-line promise/catch-or-return,promise/always-return
-  workbook.xlsx.writeBuffer().then((buffer) => {
-    const blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, filename);
-  });
 }
 
 export default function InfoDisplay({

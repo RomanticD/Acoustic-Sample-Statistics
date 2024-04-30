@@ -9,6 +9,13 @@ import {
 } from '../model/ExperimentDataModel';
 import getLinearRegressionResult from './Algorithm';
 
+/**
+ * Separates items in the provided dataList into two categories based on the scale of the experiment.
+ * @param dataList An array containing items of types AcousticParameterTableData, FormattedNoiseSensitivityScaleData, or FormattedExperimentData.
+ * @returns An object containing two properties:
+ *  - acousticParameterTableData: The item with scale 'acoustic parameter' if found, otherwise undefined.
+ *  - experimentData: The item with scale 'digital' or 'word' if found, otherwise undefined.
+ */
 export default function separateList(
   dataList: Array<
     | AcousticParameterTableData
@@ -41,6 +48,11 @@ export default function separateList(
   };
 }
 
+/**
+ * Calculates the average rating for each sample in the experiment data by averaging the ratings given by participants.
+ * @param originalData The original experiment data containing participant evaluations.
+ * @returns The updated experiment data with the average ratings for each sample.
+ */
 function getExperimentDataAfterAveragingTheRatingOfSamples(
   originalData: FormattedExperimentData,
 ): FormattedExperimentData {
@@ -94,10 +106,20 @@ function getExperimentDataAfterAveragingTheRatingOfSamples(
   return updatedExperimentData;
 }
 
+/**
+ * Calculates the individual noise annoyance reference curve using linear regression.
+ * @param data An array of arrays representing the data points for the regression analysis.
+ * @returns The result of the linear regression analysis.
+ */
 function getIndividualNoiseAnnoyanceReferenceCurve(data: number[][]): Result {
   return getLinearRegressionResult(data);
 }
 
+/**
+ * Retrieves the evaluations for pink noise samples from a participant's evaluations and prepares data for individual noise annoyance reference curve calculation.
+ * @param participantEvaluation The evaluation data for a participant containing evaluations for different samples.
+ * @returns The result of the individual noise annoyance reference curve calculation based on pink noise evaluations.
+ */
 function getCurrentParticipantEvaluationsForPinkNoise(
   participantEvaluation: SamplesEvaluationByParticipant,
 ): Result {
@@ -127,6 +149,13 @@ function getCurrentParticipantEvaluationsForPinkNoise(
   return getIndividualNoiseAnnoyanceReferenceCurve(ratingAndLoudnessLevelData);
 }
 
+/**
+ * Calibrates annoyance data based on the standard curve.
+ * @param a_i The individual-specific parameter a_i.
+ * @param b_i The individual-specific parameter b_i.
+ * @param annoyance The annoyance value to be calibrated.
+ * @returns The calibrated annoyance value.
+ */
 function calibrateDataBasedOnTheStandardCurve(
   // eslint-disable-next-line camelcase
   a_i: number,
@@ -145,6 +174,11 @@ function calibrateDataBasedOnTheStandardCurve(
   return A > 10 ? 10 : A; // 校准后大于10的按10计算
 }
 
+/**
+ * Fits and calibrates the ratings to pink noise samples based on individual-specific parameters.
+ * @param originalData The original experiment data containing participant evaluations.
+ * @returns The updated experiment data with calibrated ratings for pink noise samples.
+ */
 function fitAndCalibrateToPinkNoiseSamples(
   originalData: FormattedExperimentData,
 ) {
@@ -206,6 +240,11 @@ function fitAndCalibrateToPinkNoiseSamples(
   return updatedExperimentData;
 }
 
+/**
+ * Calibrates experiment data by averaging ratings and then fitting and calibrating to pink noise samples.
+ * @param experimentData The experiment data to be calibrated.
+ * @returns The calibrated experiment data, or undefined if input is undefined.
+ */
 export function calibrateExperimentData(
   experimentData: FormattedExperimentData | undefined,
 ): FormattedExperimentData | undefined {
@@ -257,6 +296,11 @@ export function getAverageNoiseAnnoyanceForSamples(
   return resultMap;
 }
 
+/**
+ * Retrieves function expressions representing linear regression equations for each participant's pink noise evaluations.
+ * @param originalData The experiment data containing participant evaluations.
+ * @returns An array of objects containing function expressions and participant IDs.
+ */
 export function getFunctionExpressions(
   originalData: FormattedExperimentData | undefined,
 ): { fn: string; participantId: number }[] {
